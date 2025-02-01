@@ -16,20 +16,20 @@ cmd({
         const reportMessage = text.split(' ').slice(1).join(' ');
 
         if (!reportMessage) {
-            return reply('Please provide a report message. Example: `.report my bot is not sending pics`');
+            return reply('Please provide a report message. Example: `.report My bot is not Auto Reacting to messages`');
         }
 
         // Format the report
         const formattedReport = `🚨 *New Report* 🚨\n\n` +
-                               `*From:* ${sender.split('@')[0]}\n` +
-                               `*Group:* ${isGroup ? 'Yes' : 'No'}\n` +
-                               `*Message:* ${reportMessage}`;
+                               `*👤 From:* ${sender.split('@')[0]}\n` +
+                               `*👥 Group:* ${isGroup ? 'Yes' : 'No'}\n` +
+                               `*📩 Message:* ${reportMessage}`;
 
         // Send the report to the developer
         await conn.sendMessage(DEVELOPER_NUMBER, { text: formattedReport });
 
         // Notify the user
-        await reply('Your report has been sent to the developer. Thank you!');
+        await reply('Your report has been sent to the developer. Thank you!✅');
     } catch (error) {
         console.error('Error in report command:', error);
         reply('An error occurred while sending your report. Please try again later.');
