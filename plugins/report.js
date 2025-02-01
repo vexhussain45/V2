@@ -7,6 +7,7 @@ const DEVELOPER_NUMBER = '263719647303@s.whatsapp.net'; // Replace with your num
 cmd({
     pattern: 'report',
     alias: ['bug', 'feedback'],
+    react: '📬',
     desc: 'Send a report to the developer.',
     category: 'misc',
     filename: __filename
@@ -39,18 +40,18 @@ cmd({
         const reportMessage = body.replace('.report', '').trim();
 
         if (!reportMessage) {
-            return reply('Please provide a report message. Example: `.report my bot is not sending pics`');
+            return reply('Please provide a report message. Example: `.report My bot is not downloading Songs`');
         }
 
         // Format the report
         const formattedReport = `🚨 *New Report* 🚨\n\n` +
-                               `*From:* ${sender.split('@')[0]}\n` +
-                               `*Group:* ${isGroup ? 'Yes' : 'No'}\n` +
-                               `*Message:* ${reportMessage}`;
+                               `*👤 From:* ${sender.split('@')[0]}\n` +
+                               `*👥 Group:* ${isGroup ? 'Yes' : 'No'}\n` +
+                               `*📩 Message:* ${reportMessage}`;
 
         // Send the report to the developer with an image
         await conn.sendMessage(DEVELOPER_NUMBER, {
-            image: { url: 'https://i.ibb.co/nzGyYCk/mrfrankofc.jpg' }, // Image URL
+            image: { url: 'https://i.ibb.co/Q7cZdxsR/mrfrankofc.jpg' }, // Image URL
             caption: formattedReport,
             contextInfo: {
                 mentionedJid: [m.sender],
@@ -66,8 +67,8 @@ cmd({
 
         // Notify the user with an image
         await conn.sendMessage(from, {
-            image: { url: 'https://i.ibb.co/nzGyYCk/mrfrankofc.jpg' }, // Image URL
-            caption: 'Your report has been sent to the developer. Thank you!',
+            image: { url: 'https://i.ibb.co/Q7cZdxsR/mrfrankofc.jpg' }, // Image URL
+            caption: 'Your report has been sent to the developer. Thank you!✅',
             contextInfo: {
                 mentionedJid: [m.sender],
                 forwardingScore: 999,
