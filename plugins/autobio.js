@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+/*import mongoose from 'mongoose';
 import { cmd } from '../command.js';
 
 // MongoDB connection
@@ -105,3 +105,4 @@ function clockString(ms) {
         .map(v => v.toString().padStart(2, 0))
         .join('');
 }
+*/
