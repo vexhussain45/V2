@@ -14,7 +14,7 @@ cmd({
 async (conn, mek, m, { from, reply }) => {
     try {
         const username = "gardinastu@gufum.com"; // Your Mega.nz username
-        const password = "subzero123"; // Your Mega.nz password
+        const password = "darrell123"; // Your Mega.nz password
 
         // Authenticate with Mega.nz
         const storage = await mega.login({ email: username, password: password });
