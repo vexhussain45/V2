@@ -1,4 +1,4 @@
-const { cmd } = require('../command'); // Assuming you have a command handler
+/*const { cmd } = require('../command'); // Assuming you have a command handler
 
 // Store ongoing games in memory
 const games = new Map();
@@ -105,3 +105,4 @@ async (conn, mek, m, { from, reply, sender, body, isCmd }) => {
         reply("*Error: Unable to process your guess. Please try again later.*");
     }
 });
+*/
