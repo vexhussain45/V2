@@ -1,5 +1,6 @@
-/*import mongoose from 'mongoose';
-import { cmd } from '../command.js';
+const mongoose = require('mongoose');
+const { cmd } = require('../command');
+const config = require('../config');
 
 // MongoDB connection
 mongoose.connect('mongodb+srv://darexmucheri:cMd7EoTwGglJGXwR@cluster0.uwf6z.mongodb.net/botdb?retryWrites=true&w=majority&appName=Cluster0', {
@@ -38,6 +39,7 @@ cmd({
     alias: ["bio"],
     desc: "Toggle autoBio on/off",
     category: "misc",
+    react: "📝",
     filename: __filename
 },
 async (conn, mek, m, { from, reply, text, isCreator }) => {
@@ -92,7 +94,7 @@ handler.all = async function (m) {
     }
 };
 
-export default handler;
+module.exports = handler;
 
 // Function to format uptime
 function clockString(ms) {
@@ -105,4 +107,3 @@ function clockString(ms) {
         .map(v => v.toString().padStart(2, 0))
         .join('');
 }
-*/
