@@ -16,7 +16,7 @@ cmd({
         const reportMessage = text.split(' ').slice(1).join(' ');
 
         if (!reportMessage) {
-            return reply('Please provide a report message. Example: `.report `');
+            return reply('Please provide a report message. Example: .report');
         }
 
         // Format the report
