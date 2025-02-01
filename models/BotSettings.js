@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+/*const mongoose = require('mongoose');
 
 // Schema for bot settings
 const botSettingsSchema = new mongoose.Schema({
@@ -8,3 +8,4 @@ const botSettingsSchema = new mongoose.Schema({
 
 // Export the model
 module.exports = mongoose.model('BotSettings', botSettingsSchema);
+*/
