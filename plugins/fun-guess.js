@@ -1,108 +1,115 @@
-/*const { cmd } = require('../command'); // Assuming you have a command handler
+const mongoose = require('mongoose');
+const { cmd } = require('../command'); // Assuming you have a command handler
 
-// Store ongoing games in memory
-const games = new Map();
+// MongoDB connection
+mongoose.connect('mongodb+srv://darexmucheri:cMd7EoTwGglJGXwR@cluster0.uwf6z.mongodb.net/diary?retryWrites=true&w=majority&appName=Cluster0', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
+// Diary Schema
+const diarySchema = new mongoose.Schema({
+    userId: String, // User's WhatsApp ID
+    note: String,   // Diary note
+    timestamp: { type: Date, default: Date.now } // Timestamp of the note
+});
+
+// Diary Model
+const Diary = mongoose.model('Diary', diarySchema);
+
+// Add a note to the diary
 cmd({
-    pattern: "guess", // Command trigger
-    alias: ["numbergame", "guessinggame"], // Aliases
-    use: '.guess', // Example usage
-    react: "🎮", // Emoji reaction
-    desc: "Play a number guessing game!", // Description
-    category: "games", // Command category
+    pattern: "diaryadd", // Command trigger
+    alias: ["addnote"], // Aliases
+    use: '.diaryadd <text>', // Example usage
+    react: "📝", // Emoji reaction
+    desc: "Add a note to your diary.", // Description
+    category: "diary", // Command category
+    filename: __filename // Current file name
+},
+
+async (conn, mek, m, { from, reply, sender, body }) => {
+    try {
+        const note = body.split(' ').slice(1).join(' '); // Extract the note text
+        if (!note) {
+            return reply("Please provide a note to add. Example: `.diaryadd Today was a great day!`");
+        }
+
+        // Save the note to the database
+        const newNote = new Diary({ userId: sender, note });
+        await newNote.save();
+
+        reply("📝 *Note added to your diary!*");
+    } catch (error) {
+        console.error("Error:", error); // Log the error
+        reply("*Error: Unable to add the note. Please try again later.*");
+    }
+});
+
+// Delete a note from the diary
+cmd({
+    pattern: "diarydelete", // Command trigger
+    alias: ["deletenote"], // Aliases
+    use: '.diarydelete <note number>', // Example usage
+    react: "🗑️", // Emoji reaction
+    desc: "Delete a note from your diary.", // Description
+    category: "diary", // Command category
+    filename: __filename // Current file name
+},
+
+async (conn, mek, m, { from, reply, sender, body }) => {
+    try {
+        const noteNumber = parseInt(body.split(' ')[1]); // Extract the note number
+        if (isNaN(noteNumber) || noteNumber < 1) {
+            return reply("Please provide a valid note number. Example: `.diarydelete 1`");
+        }
+
+        // Fetch all notes for the user
+        const notes = await Diary.find({ userId: sender }).sort({ timestamp: 1 });
+        if (noteNumber > notes.length) {
+            return reply(`You only have ${notes.length} notes in your diary.`);
+        }
+
+        // Delete the specified note
+        const noteToDelete = notes[noteNumber - 1];
+        await Diary.findByIdAndDelete(noteToDelete._id);
+
+        reply(`🗑️ *Note ${noteNumber} deleted from your diary!*`);
+    } catch (error) {
+        console.error("Error:", error); // Log the error
+        reply("*Error: Unable to delete the note. Please try again later.*");
+    }
+});
+
+// Show all notes in the diary
+cmd({
+    pattern: "showdiary", // Command trigger
+    alias: ["viewdiary"], // Aliases
+    use: '.showdiary', // Example usage
+    react: "📖", // Emoji reaction
+    desc: "View all notes in your diary.", // Description
+    category: "diary", // Command category
     filename: __filename // Current file name
 },
 
 async (conn, mek, m, { from, reply, sender }) => {
     try {
-        // Check if the user already has an ongoing game
-        if (games.has(sender)) {
-            return reply("You already have an ongoing game! Finish it first.");
+        // Fetch all notes for the user
+        const notes = await Diary.find({ userId: sender }).sort({ timestamp: 1 });
+        if (notes.length === 0) {
+            return reply("Your diary is empty. Add a note with `.diaryadd <text>`.");
         }
 
-        // Generate a random number between 1 and 100
-        const targetNumber = Math.floor(Math.random() * 100) + 1;
-        let attempts = 5; // Number of attempts
+        // Format the notes as a numbered list
+        let diaryList = "📖 *Your Diary:*\n\n";
+        notes.forEach((note, index) => {
+            diaryList += `${index + 1}. ${note.note}\n`;
+        });
 
-        // Store the game state
-        games.set(sender, { targetNumber, attempts });
-
-        // Send initial instructions
-        await reply(
-            `🎮 *Number Guessing Game* 🎮\n\n` +
-            `I've chosen a number between 1 and 100.\n` +
-            `You have *${attempts} attempts* to guess it.\n` +
-            `Type your guess as a number (e.g., 50).\n\n` +
-            `Good luck! 🍀`
-        );
+        reply(diaryList);
     } catch (error) {
         console.error("Error:", error); // Log the error
-        reply("*Error: Unable to start the game. Please try again later.*");
+        reply("*Error: Unable to fetch your diary. Please try again later.*");
     }
 });
-
-// Handle guesses
-cmd({
-    pattern: "guess", // Same command trigger
-    alias: ["numbergame", "guessinggame"], // Same aliases
-    use: '.guess <number>', // Example usage
-    react: "🎮", // Emoji reaction
-    desc: "Make a guess in the number guessing game.", // Description
-    category: "games", // Command category
-    filename: __filename // Current file name
-},
-
-async (conn, mek, m, { from, reply, sender, body, isCmd }) => {
-    try {
-        // Check if the user has an ongoing game
-        if (!games.has(sender)) {
-            return reply("You don't have an ongoing game. Start one with `.guess`.");
-        }
-
-        // Extract the guess from the message
-        const guess = parseInt(body.trim());
-        if (isNaN(guess) || guess < 1 || guess > 100) {
-            return reply("Please enter a valid number between 1 and 100.");
-        }
-
-        // Get the game state
-        const { targetNumber, attempts } = games.get(sender);
-
-        // Check if the guess is correct
-        if (guess === targetNumber) {
-            games.delete(sender); // End the game
-            return reply(
-                `🎉 *Congratulations!* 🎉\n` +
-                `You guessed the correct number: *${targetNumber}*.\n` +
-                `Thanks for playing! 🎮`
-            );
-        }
-
-        // Provide a hint (higher or lower)
-        const hint = guess < targetNumber ? "higher" : "lower";
-        const remainingAttempts = attempts - 1;
-
-        if (remainingAttempts === 0) {
-            games.delete(sender); // End the game
-            return reply(
-                `😢 *Game Over!* 😢\n` +
-                `The correct number was *${targetNumber}*.\n` +
-                `Better luck next time! 🎮`
-            );
-        }
-
-        // Update the game state
-        games.set(sender, { targetNumber, attempts: remainingAttempts });
-
-        // Send the hint
-        await reply(
-            `❌ Incorrect guess!\n` +
-            `Try a *${hint}* number.\n` +
-            `You have *${remainingAttempts} attempts* left.`
-        );
-    } catch (error) {
-        console.error("Error:", error); // Log the error
-        reply("*Error: Unable to process your guess. Please try again later.*");
-    }
-});
-*/
