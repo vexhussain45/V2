@@ -1,3 +1,7 @@
+// TO ALL SUBZERO BOT CLONERS
+// THATS WHY I ADD HARD ENC BECOZ YOU DONT ASK FOR PERMISSION 
+// F*CK YOU IF YOU ARE THAT KIND, MR FRANK
+
 const { cmd } = require('../command');
 const config = require('../config');
 
