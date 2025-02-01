@@ -138,7 +138,7 @@ const Diary = mongoose.model('Diary', diarySchema);
 // Add a note to the diary
 cmd({
     pattern: "diaryadd", // Command trigger
-    alias: ["addnote"], // Aliases
+    alias: ["addnote","adddiary"], // Aliases
     use: '.diaryadd <text>', // Example usage
     react: "📝", // Emoji reaction
     desc: "Add a note to your diary.", // Description
@@ -150,7 +150,7 @@ async (conn, mek, m, { from, reply, sender, body }) => {
     try {
         const note = body.split(' ').slice(1).join(' '); // Extract the note text
         if (!note) {
-            return reply("Please provide a note to add. Example: `.diaryadd Today was a great day!`");
+            return reply("Please provide a note to add. Example: `.diaryadd Today was a great day with Subzerop!`");
         }
 
         // Save the note to the database
@@ -159,9 +159,9 @@ async (conn, mek, m, { from, reply, sender, body }) => {
 
         // Send a formatted message with an image
         const ALIVE_IMG = 'https://i.ibb.co/35JHgk14/mrfrankofc.jpg'; // Replace with your image URL
-        const formattedInfo = `📝 *Note added to your diary!*\n\n` +
-                              `"${note}"\n\n` +
-                              `_Timestamp: ${new Date().toLocaleString()}_`;
+        const formattedInfo = `📝 *Note added to your diary!✅*\n\n` +
+                              `📌"${note}"\n\n` +
+                              `_⏰ Time: ${new Date().toLocaleString()}_`;
 
         await conn.sendMessage(from, {
             image: { url: ALIVE_IMG },
@@ -172,7 +172,7 @@ async (conn, mek, m, { from, reply, sender, body }) => {
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
                     newsletterJid: '120363304325601080@newsletter',
-                    newsletterName: 'ѕυϐzєяο м∂',
+                    newsletterName: 'ѕυϐzєяο м∂ 🎀',
                     serverMessageId: 143
                 }
             }
@@ -186,7 +186,7 @@ async (conn, mek, m, { from, reply, sender, body }) => {
 // Delete a note from the diary
 cmd({
     pattern: "diarydelete", // Command trigger
-    alias: ["deletenote"], // Aliases
+    alias: ["deletenote","deletediary" ], // Aliases
     use: '.diarydelete <note number>', // Example usage
     react: "🗑️", // Emoji reaction
     desc: "Delete a note from your diary.", // Description
@@ -213,9 +213,9 @@ async (conn, mek, m, { from, reply, sender, body }) => {
 
         // Send a formatted message with an image
         const ALIVE_IMG = 'https://i.ibb.co/35JHgk14/mrfrankofc.jpg'; // Replace with your image URL
-        const formattedInfo = `🗑️ *Note ${noteNumber} deleted from your diary!*\n\n` +
-                              `"${noteToDelete.note}"\n\n` +
-                              `_Timestamp: ${noteToDelete.timestamp.toLocaleString()}_`;
+        const formattedInfo = `🗑️ *Note ${noteNumber} deleted from your diary!✅*\n\n` +
+                              `🏷️"${noteToDelete.note}"\n\n` +
+                              `_⏰Time: ${noteToDelete.timestamp.toLocaleString()}_`;
 
         await conn.sendMessage(from, {
             image: { url: ALIVE_IMG },
@@ -257,10 +257,10 @@ async (conn, mek, m, { from, reply, sender }) => {
         }
 
         // Format the notes as a numbered list
-        let diaryList = "📖 *Your Diary:*\n\n";
+        let diaryList = "📖 `SUBZERO USER DIARY 📖`\n\n";
         notes.forEach((note, index) => {
-            diaryList += `${index + 1}. ${note.note}\n` +
-                         `_Timestamp: ${note.timestamp.toLocaleString()}_\n\n`;
+            diaryList += `🏷️ ${index + 1}. ${note.note}\n` +
+                         `⏰ _Time: ${note.timestamp.toLocaleString()}_\n\n`;
         });
 
         // Send a formatted message with an image
