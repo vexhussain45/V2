@@ -47,8 +47,8 @@ async (conn, mek, m, { from, reply, sender, body }) => {
         // Send a formatted message with an image
         const ALIVE_IMG = 'https://i.ibb.co/35JHgk14/mrfrankofc.jpg'; // Replace with your image URL
         const formattedInfo = `📝 *Note added to your diary!✅*\n\n` +
-                              `*🏷️"${note}"*\n\n` +
-                              `_⏰ Time: ${new Date().toLocaleString()}_`;
+                              `*🔖 "${note}"*\n\n` +
+                              `_📆 Time: ${new Date().toLocaleString()}_`;
 
         await conn.sendMessage(from, {
             image: { url: ALIVE_IMG },
@@ -59,7 +59,7 @@ async (conn, mek, m, { from, reply, sender, body }) => {
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
                     newsletterJid: '120363304325601080@newsletter',
-                    newsletterName: 'ѕυϐzєяο м∂ 🎀',
+                    newsletterName: '𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃🎀',
                     serverMessageId: 143
                 }
             }
@@ -101,8 +101,8 @@ async (conn, mek, m, { from, reply, sender, body }) => {
         // Send a formatted message with an image
         const ALIVE_IMG = 'https://i.ibb.co/35JHgk14/mrfrankofc.jpg'; // Replace with your image URL
         const formattedInfo = `🗑️ *Note ${noteNumber} deleted from your diary!✅*\n\n` +
-                              `*🏷️"${noteToDelete.note}"*\n\n` +
-                              `_⏰Time: ${noteToDelete.timestamp.toLocaleString()}_`;
+                              `*🔖 "${noteToDelete.note}"*\n\n` +
+                              `_📆 Time: ${noteToDelete.timestamp.toLocaleString()}_`;
 
         await conn.sendMessage(from, {
             image: { url: ALIVE_IMG },
@@ -113,7 +113,7 @@ async (conn, mek, m, { from, reply, sender, body }) => {
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
                     newsletterJid: '120363304325601080@newsletter',
-                    newsletterName: 'ѕυϐzєяο м∂',
+                    newsletterName: '𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃',
                     serverMessageId: 143
                 }
             }
@@ -127,7 +127,7 @@ async (conn, mek, m, { from, reply, sender, body }) => {
 // Show all notes in the diary
 cmd({
     pattern: "showdiary", // Command trigger
-    alias: ["viewdiary","diary"], // Aliases
+    alias: ["viewdiary","diary","viewnotes","notes"], // Aliases
     use: '.showdiary', // Example usage
     react: "📖", // Emoji reaction
     desc: "View all notes in your diary.", // Description
@@ -144,10 +144,10 @@ async (conn, mek, m, { from, reply, sender }) => {
         }
 
         // Format the notes as a numbered list
-        let diaryList = "📖 `SUBZERO USER DIARY`  📖\n\n";
+        let diaryList = "📖 `SUBZERO USER DIARY`  📖\n\n⟣━━━━━━━━━━━━━━⟢";
         notes.forEach((note, index) => {
-            diaryList += `*🏷️ ${index + 1}. ${note.note}*\n` +
-                         `⏰ _Time: ${note.timestamp.toLocaleString()}_\n\n`;
+            diaryList += `*🔖 ${index + 1}. ${note.note}*\n` +
+                         `📆 _Time: ${note.timestamp.toLocaleString()}_\n\n`;
         });
 
         // Send a formatted message with an image
@@ -161,7 +161,7 @@ async (conn, mek, m, { from, reply, sender }) => {
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
                     newsletterJid: '120363304325601080@newsletter',
-                    newsletterName: 'ѕυϐzєяο м∂',
+                    newsletterName: '❄️ 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃❄️',
                     serverMessageId: 143
                 }
             }
