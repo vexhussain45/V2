@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { cmd } = require('../command');
+import mongoose from 'mongoose';
+import { cmd } from '../command.js';
 
 // MongoDB connection
 mongoose.connect('mongodb+srv://darexmucheri:cMd7EoTwGglJGXwR@cluster0.uwf6z.mongodb.net/botdb?retryWrites=true&w=majority&appName=Cluster0', {
@@ -84,7 +84,7 @@ handler.all = async function (m) {
             let muptime = clockString(_muptime);
 
             // Set the bot's bio
-            let bio = `\n⌚ Time Active: ${muptime}\n\n ┃ 🛡️SUBZERO MD🛡️`;
+            let bio = `\n⌚ Time Active: ${muptime}\n\n ┃ 🛡️ᑭᖇIᑎᑕᕮ ᗷOT ᗰᗪ🛡️`;
             await this.updateProfileStatus(bio).catch(_ => _);
         }
     } catch (error) {
