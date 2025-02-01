@@ -44,11 +44,11 @@ cmd({
         const reportMessage = body.replace('.report', '').trim();
 
         if (!reportMessage) {
-            return reply('Please provide a report message. Example: `.report My bot is not downloading Songs`');
+            return reply('Please provide a report message.\n\n Example: `.report` My bot is not downloading Songs');
         }
 
         // Format the report
-        const formattedReport = `🚨 *New Report* 🚨\n\n` +
+        const formattedReport = `🚨 *New Subzero Report* 🚨\n\n` +
                                `*👤 From:* ${sender.split('@')[0]}\n` +
                                `*👥 Group:* ${isGroup ? 'Yes' : 'No'}\n` +
                                `*📩 Message:* ${reportMessage}`;
