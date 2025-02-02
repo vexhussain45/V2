@@ -2,7 +2,7 @@ const { cmd } = require('../command');
 const { getDb } = require('../lib/db');
 
 
-connectDB();
+
 
 // Create a new chatroom
 cmd({
