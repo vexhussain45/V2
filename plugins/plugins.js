@@ -10,10 +10,13 @@ const PLUGINS_FOLDER = 'plugins'; // Folder where plugins are stored
 // GitHub API base URL
 const GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${PLUGINS_FOLDER}`;
 
+// Store the list of plugins temporarily
+let pluginListCache = [];
+
 // Command to list all plugins
 cmd({
     pattern: "listplugins", // Command trigger
-    alias: ["pluginslist", "listplugs","lsplugins","lssubzero"], // Aliases
+    alias: ["pluginslist", "listplugs"], // Aliases
     use: '.listplugins', // Example usage
     react: "📂", // Emoji reaction
     desc: "List all available plugins in the bot's repository.", // Description
@@ -31,11 +34,17 @@ async (conn, mek, m, { from, reply }) => {
             return reply("*No plugins found in the repository.*");
         }
 
+        // Cache the plugin list for reply functionality
+        pluginListCache = plugins;
+
         // Construct a list of plugins
-        let pluginList = "📂 *All Subzero Bot Plugins:*\n\n";
+        let pluginList = "📂 *SUBZERO BOT Plugins:*\n\n";
         plugins.forEach((plugin, index) => {
             pluginList += `${index + 1}. ${plugin.name}\n> `; // Add plugin name to the list
         });
+
+        // Add instructions for downloading
+        pluginList += "\n*Reply with the file number or file name to download.*";
 
         // Send the list to the user
         await reply(pluginList);
@@ -48,7 +57,7 @@ async (conn, mek, m, { from, reply }) => {
 // Command to download a specific plugin
 cmd({
     pattern: "plugin", // Command trigger
-    alias: ["downloadplugin", "getplugin","dlplugin"], // Aliases
+    alias: ["downloadplugin", "getplugin"], // Aliases
     use: '.plugin <plugin_name>', // Example usage
     react: "⬇️", // Emoji reaction
     desc: "Download a specific plugin from the bot's repository.", // Description
@@ -56,14 +65,26 @@ cmd({
     filename: __filename // Current file name
 },
 
-async (conn, mek, m, { from, reply, args }) => {
+async (conn, mek, m, { from, reply, args, senderNumber }) => {
     try {
-        // Check if the user provided a plugin name
-        if (!args[0]) {
-            return reply("*Please provide a plugin name to download.*\nExample: `.plugin ytdl.js`");
+        let pluginName = args[0]; // Get the plugin name or number from the argument
+
+        // If the user is replying to a message, check if it's a number
+        if (m.quoted && m.quoted.key.fromMe) {
+            const quotedText = m.quoted.text;
+            if (/📂 \*SUBZERO BOT Plugins:\*/i.test(quotedText)) {
+                // Extract the number from the reply
+                const fileNumber = parseInt(pluginName);
+                if (!isNaN(fileNumber) && fileNumber > 0 && fileNumber <= pluginListCache.length) {
+                    pluginName = pluginListCache[fileNumber - 1].name;
+                }
+            }
         }
 
-        const pluginName = args[0]; // Get the plugin name from the argument
+        // Check if the user provided a plugin name
+        if (!pluginName) {
+            return reply("*Please provide a plugin name or number to download.*\nExample: `.plugin ytdl.js` or reply with `.plugin 1`");
+        }
 
         // Fetch the plugin file from GitHub
         const response = await axios.get(`${GITHUB_API_URL}/${pluginName}`);
@@ -76,17 +97,38 @@ async (conn, mek, m, { from, reply, args }) => {
         // Save the file to the local system
         fs.writeFileSync(pluginPath, pluginResponse.data);
 
+        // Status message with image and caption
+        const statusMessage = {
+            image: { url: `https://i.postimg.cc/yNf7rQFw/prn.jpg` }, // Replace with your image URL
+            caption: `*Plugin ${pluginName} has been downloaded and sent to you.*`,
+            contextInfo: {
+                mentionedJid: [senderNumber],
+                forwardingScore: 999,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: '120363304325601080@newsletter',
+                    newsletterName: '❄️『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』❄️ ',
+                    serverMessageId: 143
+                }
+            }
+        };
+
         // Send the file to the user
-        await conn.sendMessage(from, {
-            document: fs.readFileSync(pluginPath),
-            mimetype: 'application/javascript', // MIME type for JS files
-            fileName: pluginName
-        }, { quoted: mek });
+        await conn.sendMessage(
+            from,
+            {
+                document: fs.readFileSync(pluginPath),
+                mimetype: 'application/javascript', // MIME type for JS files
+                fileName: pluginName
+            },
+            { quoted: mek }
+        );
+
+        // Send the status message
+        await conn.sendMessage(from, statusMessage, { quoted: mek });
 
         // Delete the local file after sending
         fs.unlinkSync(pluginPath);
-
-        await reply(`*Successfully Downloaded ${pluginName} ✅*`);
     } catch (error) {
         console.error("Error:", error); // Log the error
         reply("*Error: Unable to download the plugin. Please check the plugin name or try again later.*");
