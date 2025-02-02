@@ -44,7 +44,7 @@ Support      : wa.me/18062212660
 
 
 
-
+/*
 const config = require('../config');
 const { cmd, commands } = require('../command');
 const { fetchJson } = require('../lib/functions');
@@ -97,4 +97,4 @@ cmd({
   }
 });
 
-
+*/
