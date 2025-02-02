@@ -1,4 +1,4 @@
-/*const { cmd } = require('../command'); // Assuming you have a command handler
+const { cmd } = require('../command'); // Assuming you have a command handler
 const axios = require('axios'); // For making HTTP requests to GitHub API
 
 // GitHub repository details
@@ -81,4 +81,4 @@ async (conn, mek, m, { from, reply }) => {
         reply("*Error: Unable to fetch plugins from the repository. Please try again later.*");
     }
 });
-*/
+
