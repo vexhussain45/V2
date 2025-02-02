@@ -6,6 +6,9 @@ const REPO_OWNER = 'mrfrank-ofc';
 const REPO_NAME = 'SUBZERO-BOT';
 const PLUGINS_FOLDER = 'plugins'; // Folder where plugins are stored
 
+// GitHub Personal Access Token dont think it has my data lol
+const GITHUB_TOKEN = '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'; // Replace with your token
+
 // GitHub API base URL
 const GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${PLUGINS_FOLDER}`;
 
@@ -16,6 +19,9 @@ async function fetchCommitHistory(filePath) {
             params: {
                 path: filePath,
                 per_page: 1 // Fetch only the latest commit
+            },
+            headers: {
+                Authorization: `Bearer ${GITHUB_TOKEN}` // Authenticate with the token
             }
         });
         return response.data[0]; // Return the latest commit
@@ -37,7 +43,7 @@ function isCommitRecent(commit) {
 // Command to list plugins with recent commit history
 cmd({
     pattern: "recentplugins", // Command trigger
-    alias: ["recentplugs", "newplugins","updates","whatsnew"], // Aliases
+    alias: ["recentplugs", "newplugins"], // Aliases
     use: '.recentplugins', // Example usage
     react: "🕒", // Emoji reaction
     desc: "List all plugins with commit history from the last 2 hours.", // Description
@@ -48,7 +54,11 @@ cmd({
 async (conn, mek, m, { from, reply }) => {
     try {
         // Fetch the folder structure from GitHub
-        const response = await axios.get(GITHUB_API_URL);
+        const response = await axios.get(GITHUB_API_URL, {
+            headers: {
+                Authorization: `Bearer ${GITHUB_TOKEN}` // Authenticate with the token
+            }
+        });
         const plugins = response.data.filter(item => item.type === 'file'); // Only list files
 
         if (plugins.length === 0) {
@@ -69,7 +79,7 @@ async (conn, mek, m, { from, reply }) => {
         }
 
         // Construct a list of recent plugins
-        let pluginList = "🕒 *Recently Updated Plugins (Last 2 Hours):*\n\n";
+        let pluginList = "🕒 *RECENTLY UPDATED PLUGINS (Last 2 Hours):*\n\n";
         recentPlugins.forEach((plugin, index) => {
             pluginList += `${index + 1}. ${plugin.name}\n`; // Add plugin name to the list
         });
@@ -78,6 +88,10 @@ async (conn, mek, m, { from, reply }) => {
         await reply(pluginList);
     } catch (error) {
         console.error("Error:", error); // Log the error
-        reply("*Error: Unable to fetch plugins from the repository. Please try again later.*");
+        if (error.response && error.response.status === 403) {
+            reply("*Error: API rate limit exceeded. Please try again later or authenticate with a GitHub token.*");
+        } else {
+            reply("*Error: Unable to fetch plugins from the repository. Please try again later.*");
+        }
     }
 });
