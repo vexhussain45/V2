@@ -37,13 +37,11 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
         }
 
         // Construct a numbered list of files
-        let fileList = "        📑 `SUBZERO MD BOT` \n*📂 All User's Session ID files :*\n\n";
+        let fileList = "        📑 `SUBZERO MD BOT` \n*📂 All User's Session ID files :*\n";
+        fileList += `*🏮 Total Files: ${files.length}*\n\n`; // Add total files count here
         files.forEach((file, index) => {
             fileList += `${index + 1}. ${file.name}\n`; // Add file name to the list
         });
-
-        // Add the total number of files
-        fileList += `\n*Total Files: ${files.length}*`;
 
         // Send the list to the user
         await reply(fileList);
@@ -101,7 +99,7 @@ async (conn, mek, m, { from, reply, senderNumber, args }) => {
             for (const file of files) {
                 await file.delete();
             }
-            return reply("*All files have been deleted from your Mega.nz account.*");
+            return reply("*🗑️ All files have been deleted from your Mega.nz account.*");
         } else if (!isNaN(option)) {
             // Delete a specific file by its number
             const fileNumber = parseInt(option);
@@ -111,7 +109,7 @@ async (conn, mek, m, { from, reply, senderNumber, args }) => {
 
             const fileToDelete = files[fileNumber - 1]; // Get the file by index
             await fileToDelete.delete(); // Delete the file
-            return reply(`*File ${fileNumber} (${fileToDelete.name}) has been deleted from your Mega.nz account.*`);
+            return reply(`*🗑️ File ${fileNumber} (${fileToDelete.name}) has been deleted from your Mega.nz account.*`);
         } else {
             return reply("*Invalid option. Please use `.megadel all` or `.megadel <number>`.*");
         }
