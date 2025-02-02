@@ -1,4 +1,4 @@
-const connectDB = require('../lib/db'); // Import the MongoDB connection
+/*const connectDB = require('../lib/db'); // Import the MongoDB connection
 const { cmd } = require('../command');
 const config = require('../config');
 const BotSettings = require('../models/BotSettings'); // Import the model
@@ -141,3 +141,4 @@ function clockString(ms) {
         .map(v => v.toString().padStart(2, 0))
         .join('');
 }
+*/
