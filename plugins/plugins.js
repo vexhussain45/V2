@@ -13,7 +13,7 @@ const GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/
 // Command to list all plugins
 cmd({
     pattern: "listplugins", // Command trigger
-    alias: ["pluginslist", "listplugs"], // Aliases
+    alias: ["pluginslist", "listplugs","lsplugins","lssubzero"], // Aliases
     use: '.listplugins', // Example usage
     react: "📂", // Emoji reaction
     desc: "List all available plugins in the bot's repository.", // Description
@@ -32,9 +32,9 @@ async (conn, mek, m, { from, reply }) => {
         }
 
         // Construct a list of plugins
-        let pluginList = "📂 *Available Plugins:*\n\n";
+        let pluginList = "📂 *All Subzero Bot Plugins:*\n\n";
         plugins.forEach((plugin, index) => {
-            pluginList += `${index + 1}. ${plugin.name}\n`; // Add plugin name to the list
+            pluginList += `${index + 1}. ${plugin.name}\n> ᴍᴀᴅᴇ ʙʏ ᴍʀ ғʀᴀɴᴋ`; // Add plugin name to the list
         });
 
         // Send the list to the user
@@ -48,7 +48,7 @@ async (conn, mek, m, { from, reply }) => {
 // Command to download a specific plugin
 cmd({
     pattern: "plugin", // Command trigger
-    alias: ["downloadplugin", "getplugin"], // Aliases
+    alias: ["downloadplugin", "getplugin","dlplugin"], // Aliases
     use: '.plugin <plugin_name>', // Example usage
     react: "⬇️", // Emoji reaction
     desc: "Download a specific plugin from the bot's repository.", // Description
@@ -86,7 +86,7 @@ async (conn, mek, m, { from, reply, args }) => {
         // Delete the local file after sending
         fs.unlinkSync(pluginPath);
 
-        await reply(`*Plugin ${pluginName} has been downloaded and sent to you.*`);
+        await reply(`*Successfully Downloaded ${pluginName} ✅*`);
     } catch (error) {
         console.error("Error:", error); // Log the error
         reply("*Error: Unable to download the plugin. Please check the plugin name or try again later.*");
