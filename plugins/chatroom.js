@@ -1,6 +1,9 @@
 const { cmd } = require('../command');
 const { getDb } = require('../lib/db');
 
+
+getDb();
+
 // Create a new chatroom
 cmd({
   pattern: "createchat",
