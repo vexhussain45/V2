@@ -2,7 +2,7 @@
 
 
 const { cmd } = require('../command');
-const connectDB = require('../db'); // Import the MongoDB connection
+const connectDB = require('../lib/db'); // Import the MongoDB connection
 // const Diary = require('../models/Diary'); // Import the Diary model
 
 // Connect to MongoDB
