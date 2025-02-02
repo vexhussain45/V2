@@ -34,7 +34,7 @@ async (conn, mek, m, { from, reply }) => {
         // Construct a list of plugins
         let pluginList = "📂 *All Subzero Bot Plugins:*\n\n";
         plugins.forEach((plugin, index) => {
-            pluginList += `${index + 1}. ${plugin.name}\n> ᴍᴀᴅᴇ ʙʏ ᴍʀ ғʀᴀɴᴋ`; // Add plugin name to the list
+            pluginList += `${index + 1}. ${plugin.name}\n> `; // Add plugin name to the list
         });
 
         // Send the list to the user
