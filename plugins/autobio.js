@@ -1,22 +1,19 @@
-
-
-
-
-
-
-/*
-
-const mongoose = require('mongoose');
+const connectDB = require('../lib/db'); // Import the MongoDB connection
 const { cmd } = require('../command');
 const config = require('../config');
 const BotSettings = require('../models/BotSettings'); // Import the model
 
+/*
 // MongoDB connection
 mongoose.connect('mongodb+srv://darexmucheri:cMd7EoTwGglJGXwR@cluster0.uwf6z.mongodb.net/botdb?retryWrites=true&w=majority&appName=Cluster0', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
+*/
+
+// Connect to MongoDB
+connectDB();
 
 // Function to update autoBio setting
 async function updateAutoBio(userId, status) {
@@ -152,4 +149,3 @@ function clockString(ms) {
         .map(v => v.toString().padStart(2, 0))
         .join('');
 }
-*/
