@@ -1,7 +1,7 @@
-const { cmd } = require('../command');
+/*const { cmd } = require('../command');
 const { getDb } = require('../lib/db');
 
-connect();
+
 getDb();
 
 // Create a new chatroom
@@ -155,3 +155,4 @@ cmd({
     reply('An error occurred while fetching messages.');
   }
 });
+*/
