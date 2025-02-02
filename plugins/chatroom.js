@@ -1,8 +1,5 @@
 const { cmd } = require('../command');
-const { connctDB } = require('../lib/db');
-
-
-connectDB();
+const { getDb } = require('../lib/db');
 
 // Create a new chatroom
 cmd({
@@ -16,7 +13,7 @@ cmd({
   if (!chatroomName) return reply('Please provide a name for the chatroom.');
 
   try {
-    const db = connectDB();
+    const db = getDb();
     const chatrooms = db.collection('chatrooms');
 
     // Check if the chatroom already exists
@@ -40,7 +37,7 @@ cmd({
   filename: __filename
 }, async (conn, mek, m, { reply }) => {
   try {
-    const db = connectDB();
+    const db = getDb();
     const chatrooms = db.collection('chatrooms');
 
     const chatroomList = await chatrooms.find().toArray();
@@ -66,7 +63,7 @@ cmd({
   if (!chatroomName) return reply('Please provide the name of the chatroom to join.');
 
   try {
-    const db = connectDB();
+    const db = getDb();
     const chatrooms = db.collection('chatrooms');
     const chatroomMembers = db.collection('chatroom_members');
 
@@ -100,7 +97,7 @@ cmd({
   if (!message) return reply('Please provide a message to send.');
 
   try {
-    const db = connectDB();
+    const db = getDb();
     const chatroomMembers = db.collection('chatroom_members');
     const chatroomMessages = db.collection('chatroom_messages');
 
@@ -131,7 +128,7 @@ cmd({
   filename: __filename
 }, async (conn, mek, m, { from, reply }) => {
   try {
-    const db = connectDB();
+    const db = getDb();
     const chatroomMembers = db.collection('chatroom_members');
     const chatroomMessages = db.collection('chatroom_messages');
 
