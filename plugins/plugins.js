@@ -100,7 +100,7 @@ async (conn, mek, m, { from, reply, args, senderNumber }) => {
         // Status message with image and caption
         const statusMessage = {
             image: { url: `https://i.postimg.cc/yNf7rQFw/prn.jpg` }, // Replace with your image URL
-            caption: `*Plugin ${pluginName} has been downloaded and sent to you.*`,
+            caption: `*Successfully downloaded ${pluginName} ✅*`,
             contextInfo: {
                 mentionedJid: [senderNumber],
                 forwardingScore: 999,
