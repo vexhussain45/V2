@@ -4,7 +4,7 @@
 
 
 
-
+/*
 
 const mongoose = require('mongoose');
 const { cmd } = require('../command');
@@ -152,3 +152,4 @@ function clockString(ms) {
         .map(v => v.toString().padStart(2, 0))
         .join('');
 }
+*/
