@@ -62,7 +62,7 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
         });
 
         // Footer message
-        fileList += "\n*To download a book, simply reply with the number of the book.*\n*Example:* `download 1`";
+        fileList += "\n*To download a book, simply reply with the number of the book.*\n\n*Example:* `download 1`";
 
         // Send the list to the user
         await reply(fileList);
