@@ -17,7 +17,7 @@ cmd({
 async (conn, mek, m, { from, reply, senderNumber }) => {
     try {
         // Welcome message
-        await reply("Welcome to SubZero Library! To proceed, type `showlibrary`.");
+        await reply("Welcome to SubZero Library😃📚!\n\n To proceed, type `.showlibrary`.\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ");
 
     } catch (error) {
         console.error("Error:", error); // Log the error
@@ -55,8 +55,8 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
         }
 
         // Construct a numbered list of files
-        let fileList = "        📑 `SUBZERO LIBRARY` \n\n*📂 Available Books:*\n";
-        fileList += `*🏮 Total Books: ${files.length}*\n\n`; // Add total files count here
+        let fileList = "        📑 `SUBZERO LIBRARY` \n\n⟣━━━━━━━━━━━━⟢\n*📂 Available Books:*\n";
+        fileList += `*🏮 Total Books: ${files.length}*\n⟣━━━━━━━━━━━━⟢\n\n`; // Add total files count here
         files.forEach((file, index) => {
             fileList += `${index + 1}. ${file.name}\n`; // Add file name to the list
         });
