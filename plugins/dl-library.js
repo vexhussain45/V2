@@ -55,7 +55,7 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
         }
 
         // Construct a numbered list of files
-        let fileList = "        📑 `SUBZERO LIBRARY` \n*📂 Available Books:*\n";
+        let fileList = "        📑 `SUBZERO LIBRARY` \n\n*📂 Available Books:*\n";
         fileList += `*🏮 Total Books: ${files.length}*\n\n`; // Add total files count here
         files.forEach((file, index) => {
             fileList += `${index + 1}. ${file.name}\n`; // Add file name to the list
@@ -84,8 +84,8 @@ cmd({
 
 async (conn, mek, m, { from, reply, senderNumber, args }) => {
     try {
-        const username = "gardinastu@gufum.com"; // Your Mega.nz username
-        const password = "darrell123"; // Your Mega.nz password
+        const username = "kebefe9699@rykone.com"; // Your Mega.nz username
+        const password = "books123"; // Your Mega.nz password
 
         // Authenticate with Mega.nz using the Storage class
         const storage = await new Storage({
@@ -127,7 +127,7 @@ async (conn, mek, m, { from, reply, senderNumber, args }) => {
             document: fs.readFileSync(tempFilePath),
             fileName: fileToDownload.name,
             mimetype: 'application/octet-stream', // Adjust mimetype if needed
-            caption: `📥 Here is your book: ${fileToDownload.name}`
+            caption: `*✅ Successfully Downloaded: ${fileToDownload.name}*`
         });
 
         // Delete the temporary file after sending
