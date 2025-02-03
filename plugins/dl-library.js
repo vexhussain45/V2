@@ -55,8 +55,8 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
         }
 
         // Construct a numbered list of files
-        let fileList = "        📑 `SUBZERO LIBRARY` \n*📂 Available Books:*\n";
-        fileList += `*🏮 Total Books: ${files.length}*\n\n`; // Add total files count here
+        let fileList = "        📑 `SUBZERO LIBRARY` \n\n⟣━━━━━━━━━━━━━━⟢\n*📂 Available Books:*\n";
+        fileList += `*🏮 Total Books: ${files.length}*\n⟣━━━━━━━━━━━━━━⟢\n\n`; // Add total files count here
         files.forEach((file, index) => {
             fileList += `${index + 1}. ${file.name}\n`; // Add file name to the list
         });
