@@ -17,10 +17,10 @@ cmd({
 async (conn, mek, m, { from, reply, senderNumber }) => {
     try {
         // Welcome message with image
-        const message = "Welcome to SubZero Library😃📚!\n\nTo proceed, type `.showlibrary`.\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ";
+        const message = "Welcome to SubZero Library😃📚!\n\nTo proceed, type `.showlibrary`.\n\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ";
 
         await conn.sendMessage(from, {
-            image: { url: `https://i.ibb.co/nzGyYCk/mrfrankofc.jpg` }, // Image URL
+            image: { url: `https://i.ibb.co/7dMwhmHm/mrfrankofc.jpg` }, // Image URL
             caption: message,
             contextInfo: {
                 mentionedJid: [m.sender],
