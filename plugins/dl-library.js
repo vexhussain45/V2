@@ -1,5 +1,8 @@
 const { Storage } = require('megajs'); // Import the Storage class from megajs
 const { cmd } = require('../command'); // Assuming you have a command handler
+const fs = require('fs'); // For file system operations
+const { promisify } = require('util');
+const streamPipeline = promisify(require('stream').pipeline);
 
 cmd({
     pattern: "library", // Command trigger
@@ -111,11 +114,19 @@ async (conn, mek, m, { from, reply, senderNumber, args }) => {
 
         const fileToDownload = files[fileNumber - 1]; // Get the file by index
 
-        // Get the download link for the file
-        const downloadLink = await fileToDownload.link();
+        // Download the file to a temporary location
+        const tempFilePath = `./temp_${fileToDownload.name}`;
+        const fileStream = fs.createWriteStream(tempFilePath);
+        const downloadStream = await fileToDownload.download();
 
-        // Send the download link to the user
-        await reply(`*📥 Download Link for ${fileToDownload.name}:*\n${downloadLink}`);
+        // Pipe the download stream to the file
+        await streamPipeline(downloadStream, fileStream);
+
+        // Send the file to the user
+        await conn.sendFile(from, tempFilePath, fileToDownload.name, `📥 Here is your book: ${fileToDownload.name}`);
+
+        // Delete the temporary file after sending
+        fs.unlinkSync(tempFilePath);
 
     } catch (error) {
         console.error("Error:", error); // Log the error
