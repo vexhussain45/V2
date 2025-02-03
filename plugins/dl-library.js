@@ -6,7 +6,7 @@ const streamPipeline = promisify(require('stream').pipeline);
 
 cmd({
     pattern: "library", // Command trigger
-    alias: ["lib", "subzero"], // Aliases
+    alias: ["lib", "subzerolibrary"], // Aliases
     use: '.library', // Example usage
     react: "📚", // Emoji reaction
     desc: "Access the SubZero Library.", // Description
@@ -37,8 +37,8 @@ cmd({
 
 async (conn, mek, m, { from, reply, senderNumber }) => {
     try {
-        const username = "gardinastu@gufum.com"; // Your Mega.nz username
-        const password = "darrell123"; // Your Mega.nz password
+        const username = "kebefe9699@rykone.com"; // Your Mega.nz username
+        const password = "books123"; // Your Mega.nz password
 
         // Authenticate with Mega.nz using the Storage class
         const storage = await new Storage({
