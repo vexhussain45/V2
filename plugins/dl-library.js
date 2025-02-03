@@ -23,7 +23,7 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
         const message = "Welcome to SubZero Library😃📚!\n\nTo proceed, type `.showlibrary`.\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ";
 
         await conn.sendMessage(from, {
-            image: { url: `https://i.ibb.co/7dMwhmHm/mrfrankofc.jpg` }, // Image URL
+            image: { url: `https://i.ibb.co/nzGyYCk/mrfrankofc.jpg` }, // Image URL
             caption: message,
             contextInfo: {
                 mentionedJid: [m.sender],
@@ -88,6 +88,8 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
         // Store the file list in a temporary object for reply handling
         tempFileStorage[senderNumber] = files;
 
+        console.log(`File list stored for user: ${senderNumber}`); // Debug log
+
     } catch (error) {
         console.error("Error:", error); // Log the error
         reply("*Error: Unable to fetch files from the SubZero Library. Please try again later.*");
@@ -102,21 +104,29 @@ module.exports = (conn) => {
             const mek = messages[0];
             const { from, body, quoted } = mek;
 
+            console.log(`Received message from ${from}: ${body}`); // Debug log
+
             // Check if the message is a reply to the file list
             if (quoted && quoted.body && quoted.body.includes("SUBZERO LIBRARY")) {
+                console.log(`Detected reply to file list from ${from}`); // Debug log
+
                 const fileNumber = parseInt(body.trim());
 
                 // Validate the file number
                 if (isNaN(fileNumber) || fileNumber < 1 || !tempFileStorage[from]) {
+                    console.log(`Invalid file number or no file list found for ${from}`); // Debug log
                     return conn.sendMessage(from, { text: "*Invalid book number. Please reply with a valid number.*" });
                 }
 
                 const files = tempFileStorage[from];
                 if (fileNumber > files.length) {
+                    console.log(`File number out of range for ${from}`); // Debug log
                     return conn.sendMessage(from, { text: "*Invalid book number. Please reply with a valid number.*" });
                 }
 
                 const fileToDownload = files[fileNumber - 1]; // Get the file by index
+
+                console.log(`Downloading file: ${fileToDownload.name}`); // Debug log
 
                 // Download the file to a temporary location
                 const tempFilePath = `./temp_${fileToDownload.name}`;
@@ -126,6 +136,8 @@ module.exports = (conn) => {
                 // Pipe the download stream to the file
                 await streamPipeline(downloadStream, fileStream);
 
+                console.log(`File downloaded: ${fileToDownload.name}`); // Debug log
+
                 // Send the file to the user
                 await conn.sendMessage(from, {
                     document: fs.readFileSync(tempFilePath),
@@ -134,8 +146,12 @@ module.exports = (conn) => {
                     caption: `*✅ Successfully Downloaded: ${fileToDownload.name}*`
                 });
 
+                console.log(`File sent to user: ${from}`); // Debug log
+
                 // Delete the temporary file after sending
                 fs.unlinkSync(tempFilePath);
+
+                console.log(`Temporary file deleted: ${tempFilePath}`); // Debug log
             }
         } catch (error) {
             console.error("Error:", error); // Log the error
