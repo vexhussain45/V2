@@ -55,8 +55,8 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
         }
 
         // Construct a numbered list of files
-        let fileList = "        📑 `SUBZERO LIBRARY` \n\n⟣━━━━━━━━━━━━━━⟢\n*📂 Available Books:*\n";
-        fileList += `*🏮 Total Books: ${files.length}*\n⟣━━━━━━━━━━━━━━⟢\n\n`; // Add total files count here
+        let fileList = "        📑 `SUBZERO LIBRARY` \n*📂 Available Books:*\n";
+        fileList += `*🏮 Total Books: ${files.length}*\n\n`; // Add total files count here
         files.forEach((file, index) => {
             fileList += `${index + 1}. ${file.name}\n`; // Add file name to the list
         });
@@ -123,7 +123,12 @@ async (conn, mek, m, { from, reply, senderNumber, args }) => {
         await streamPipeline(downloadStream, fileStream);
 
         // Send the file to the user
-        await conn.sendFile(from, tempFilePath, fileToDownload.name, `📥 Here is your book: ${fileToDownload.name}`);
+        await conn.sendMessage(from, {
+            document: fs.readFileSync(tempFilePath),
+            fileName: fileToDownload.name,
+            mimetype: 'application/octet-stream', // Adjust mimetype if needed
+            caption: `📥 Here is your book: ${fileToDownload.name}`
+        });
 
         // Delete the temporary file after sending
         fs.unlinkSync(tempFilePath);
