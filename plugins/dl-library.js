@@ -4,6 +4,9 @@ const fs = require('fs'); // For file system operations
 const { promisify } = require('util');
 const streamPipeline = promisify(require('stream').pipeline);
 
+// Store file lists in a temporary object (avoid global variables)
+const tempFileStorage = {};
+
 cmd({
     pattern: "library", // Command trigger
     alias: ["lib", "subzerolibrary"], // Aliases
@@ -82,8 +85,8 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
         // Send the list to the user
         await reply(fileList);
 
-        // Store the file list in a global variable for reply handling
-        global.subzeroLibraryFiles = files;
+        // Store the file list in a temporary object for reply handling
+        tempFileStorage[senderNumber] = files;
 
     } catch (error) {
         console.error("Error:", error); // Log the error
@@ -92,8 +95,9 @@ async (conn, mek, m, { from, reply, senderNumber }) => {
 });
 
 // Handle replies for downloading books
-conn.on('message', async (mek) => {
+conn.ev.on('messages.upsert', async ({ messages }) => {
     try {
+        const mek = messages[0];
         const { from, body, quoted } = mek;
 
         // Check if the message is a reply to the file list
@@ -101,11 +105,16 @@ conn.on('message', async (mek) => {
             const fileNumber = parseInt(body.trim());
 
             // Validate the file number
-            if (isNaN(fileNumber) || fileNumber < 1 || fileNumber > global.subzeroLibraryFiles.length) {
+            if (isNaN(fileNumber) || fileNumber < 1 || !tempFileStorage[from]) {
                 return conn.sendMessage(from, { text: "*Invalid book number. Please reply with a valid number.*" });
             }
 
-            const fileToDownload = global.subzeroLibraryFiles[fileNumber - 1]; // Get the file by index
+            const files = tempFileStorage[from];
+            if (fileNumber > files.length) {
+                return conn.sendMessage(from, { text: "*Invalid book number. Please reply with a valid number.*" });
+            }
+
+            const fileToDownload = files[fileNumber - 1]; // Get the file by index
 
             // Download the file to a temporary location
             const tempFilePath = `./temp_${fileToDownload.name}`;
