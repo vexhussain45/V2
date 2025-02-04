@@ -297,7 +297,7 @@ async (conn, mek, m, {
 
   try {
     // Remove extra space and encode the URL
-    const response = await axios.get(`https://bk9.fun/tools/screenshot?device=tablet&url=${encodeURIComponent(q)}`);
+    const response = await axios.get(`https://api.davidcyriltech.my.id/ssweb?device=tablet?url=${encodeURIComponent(q)}`);
     
     // Validate the API response
     const screenshotUrl = response.data && response.data.screenshotUrl;
