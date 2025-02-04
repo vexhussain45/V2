@@ -44,6 +44,64 @@ async function setPassphrase(sender, passphrase) {
     );
 }
 
+
+// USER ID SECTION 
+
+cmd({
+    pattern: "getuserid",
+    alias: ["myid"],
+    use: '.getuserid',
+    react: "🆔",
+    desc: "Get your user ID.",
+    category: "diary",
+    filename: __filename
+}, async (conn, mek, m, { from, reply, sender }) => {
+    try {
+        reply(`Your user ID is: ${sender}`);
+    } catch (error) {
+        console.error("Error:", error);
+        reply("*Error: Unable to fetch your user ID. Please try again later.*");
+    }
+});
+
+// RESET PASS 
+cmd({
+    pattern: "resetpassphrase",
+    alias: ["resetpass"],
+    use: '.resetpassphrase <user_id>',
+    react: "🛠️",
+    desc: "Reset a user's passphrase (superadmin only).",
+    category: "diary",
+    filename: __filename
+}, async (conn, mek, m, { from, reply, sender, body }) => {
+    try {
+        const [command, targetUserId, superadminPassphrase] = body.split(' ');
+        if (!targetUserId || !superadminPassphrase) {
+            return reply("⚠️ Please provide the target user ID and superadmin passphrase. Example: `.resetpassphrase 1234567890@c.us subzero_bot`");
+        }
+
+        // Verify superadmin passphrase
+        if (superadminPassphrase !== "subzero_bot") {
+            return reply("❌ Invalid superadmin passphrase. Access denied.");
+        }
+
+        // Reset the target user's passphrase
+        await Diary.updateOne(
+            { userId: targetUserId },
+            { $set: { passphrase: null } }
+        );
+
+        // Clear the target user's session (if any)
+        sessionCache.del(targetUserId);
+
+        reply(`🛠️ Passphrase for user ${targetUserId} has been reset. They can now set a new passphrase.`);
+    } catch (error) {
+        console.error("Error:", error); // Log the error
+        reply("*Error: Unable to reset passphrase. Please try again later.*");
+    }
+});
+
+
 // Login command (authenticate user)
 cmd({
     pattern: "login",
