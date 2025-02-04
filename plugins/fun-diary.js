@@ -135,7 +135,7 @@ cmd({
         await newNote.save();
 
         // Send a formatted message with an image
-        const SUBZERO_DIARY_IMG = 'https://i.ibb.co/35JHgk14/mrfrankofc.jpg'; // Replace with your image URL
+        const SUBZERO_DIARY_IMG = 'https://i.ibb.co/cSdrnPMV/mrfrankofc.jpg'; // Replace with your image URL
         const formattedInfo = `📝 *Note added to your diary!✅*\n\n` +
                               `*🔖 "${note}"*\n\n` +
                               `_📆 Time: ${getHarareTime()}_`; // Use Harare time
@@ -192,7 +192,7 @@ cmd({
         await Diary.findByIdAndDelete(noteToDelete._id);
 
         // Send a formatted message with an image
-        const SUBZERO_DIARY_IMG = 'https://i.ibb.co/35JHgk14/mrfrankofc.jpg'; // Replace with your image URL
+        const SUBZERO_DIARY_IMG = 'https://i.ibb.co/cSdrnPMV/mrfrankofc.jpg'; // Replace with your image URL
         const formattedInfo = `🗑️ *Note ${noteNumber} deleted from your diary!✅*\n\n` +
                               `*🔖 "${noteToDelete.note}"*\n\n` +
                               `_📆 Time: ${new Date(noteToDelete.timestamp).toLocaleString('en-US', { timeZone: 'Africa/Harare' })}_`; // Use Harare time
@@ -243,7 +243,7 @@ cmd({
         await Diary.deleteMany({ userId: sender });
 
         // Send a formatted message with an image
-        const SUBZERO_DIARY_IMG = 'https://i.ibb.co/35JHgk14/mrfrankofc.jpg'; // Replace with your image URL
+        const SUBZERO_DIARY_IMG = 'https://i.ibb.co/cSdrnPMV/mrfrankofc.jpg'; // Replace with your image URL
         const formattedInfo = `💥 *All notes deleted from your diary!✅*\n\n` +
                               `_📆 Time: ${getHarareTime()}_`; // Use Harare time
 
@@ -297,7 +297,7 @@ cmd({
         });
 
         // Send a formatted message with an image
-        const SUBZERO_DIARY_IMG = 'https://i.ibb.co/35JHgk14/mrfrankofc.jpg'; // Replace with your image URL
+        const SUBZERO_DIARY_IMG = 'https://i.ibb.co/cSdrnPMV/mrfrankofc.jpg'; // Replace with your image URL
         await conn.sendMessage(from, {
             image: { url: SUBZERO_DIARY_IMG },
             caption: diaryList,
