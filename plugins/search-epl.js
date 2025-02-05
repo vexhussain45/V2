@@ -1,7 +1,6 @@
 const axios = require('axios');
 const config = require('../config');
-const { cmd, commands } = require('../command');
-const { fetchJson } = require('../lib/functions');
+const { cmd } = require('../command');
 
 cmd({
   pattern: 'epl',
@@ -9,13 +8,11 @@ cmd({
   desc: 'Display current EPL standings',
   category: 'sports',
   filename: __filename
-}, async (conn, mek, m, { from, reply, fetchJson, sender }) => {
+}, async (conn, mek, m, { from, reply }) => {
   try {
-    // Fetch the EPL standings data
-    const data = await fetchJson('https://api.dreaded.site/api/standings/PL');
+    const response = await axios.get('https://api.dreaded.site/api/standings/PL');
+    const data = response.data;
     
-    // Assuming the API returns a structure like:
-    // { standings: [ { position: 1, team: 'Team Name', points: 45 }, ... ] }
     let message = '🏆 *EPL TABLE STANDINGS*\n\n';
     
     if (Array.isArray(data.standings)) {
@@ -23,11 +20,9 @@ cmd({
         message += `${team.position}. ${team.team} - ${team.points} pts\n`;
       });
     } else {
-      // Fallback: just dump the data as JSON if not as expected.
       message += JSON.stringify(data.standings, null, 2);
     }
     
-    // Send the formatted standings message back to the chat
     await conn.sendMessage(from, { text: message }, { quoted: mek });
   } catch (error) {
     console.error('Error fetching EPL standings:', error);
