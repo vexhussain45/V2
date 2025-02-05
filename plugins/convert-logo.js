@@ -226,6 +226,8 @@ Support      : wa.me/18062212660
 // MADE BY MR FRANK
 // REMOVE THIS IF YOU ARE GAY
 
+const config = require('../config');
+const { cmd, commands } = require('../command');
 const axios = require('axios');
 
 cmd({
