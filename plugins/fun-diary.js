@@ -49,7 +49,7 @@ async function setPassphrase(sender, passphrase) {
 
 cmd({
     pattern: "getuserid",
-    alias: ["myid"],
+    alias: ["myid","getid"],
     use: '.getuserid',
     react: "🆔",
     desc: "Get your user ID.",
@@ -57,7 +57,7 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, reply, sender }) => {
     try {
-        reply(`Your user ID is: ${sender}`);
+        reply(`[❗] Your user ID is: ${sender}`);
     } catch (error) {
         console.error("Error:", error);
         reply("*Error: Unable to fetch your user ID. Please try again later.*");
@@ -67,7 +67,7 @@ cmd({
 // RESET PASS 
 cmd({
     pattern: "resetpassphrase",
-    alias: ["resetpass"],
+    alias: ["resetpass","resetdiarypassword","resetdiary"],
     use: '.resetpassphrase <user_id>',
     react: "🛠️",
     desc: "Reset a user's passphrase (superadmin only).",
@@ -77,12 +77,12 @@ cmd({
     try {
         const [command, targetUserId, superadminPassphrase] = body.split(' ');
         if (!targetUserId || !superadminPassphrase) {
-            return reply("⚠️ Please provide the target user ID and superadmin passphrase. Example: `.resetpassphrase 1234567890@c.us subzero_bot`");
+            return reply("[⚠️] Please provide the target user ID and superadmin passphrase.\n Example: `.resetpassphrase 1234567890@c.us subzero_bot`");
         }
 
         // Verify superadmin passphrase
         if (superadminPassphrase !== "subzero_bot") {
-            return reply("❌ Invalid superadmin passphrase. Access denied.");
+            return reply("❌ Invalid superadmin passphrase. Access denied ☝.");
         }
 
         // Reset the target user's passphrase
@@ -94,7 +94,7 @@ cmd({
         // Clear the target user's session (if any)
         sessionCache.del(targetUserId);
 
-        reply(`🛠️ Passphrase for user ${targetUserId} has been reset. They can now set a new passphrase.`);
+        reply(`🛠️ Passphrase for user ${targetUserId} has been reset. They can now set a new passphrase using \`.setpassphrase\`.`);
     } catch (error) {
         console.error("Error:", error); // Log the error
         reply("*Error: Unable to reset passphrase. Please try again later.*");
@@ -121,7 +121,7 @@ cmd({
         // Authenticate user
         const auth = await authenticateUser(sender, passphrase);
         if (auth.status === "new_user") {
-            return reply("Welcome! To start using your diary, set a passphrase first using `.setpassphrase your_passphrase`.");
+            return reply("Welcome 👋😄! To start using your diary, set a passphrase first using `.setpassphrase your_passphrase`.");
         }
         if (auth.status === "incorrect") {
             return reply("❌ Incorrect passphrase. Please try again.");
@@ -129,7 +129,7 @@ cmd({
 
         // Store user in session cache
         sessionCache.set(sender, true);
-        reply("🔐 Login successful! You can now use diary commands without your passphrase.");
+        reply("🔐 Login successful! \nYou can now use diary commands without your passphrase.");
     } catch (error) {
         console.error("Error:", error); // Log the error
         reply("*Error: Unable to authenticate. Please try again later.*");
@@ -155,12 +155,12 @@ cmd({
         // Check if user already has a passphrase
         const user = await Diary.findOne({ userId: sender });
         if (user?.passphrase) {
-            return reply("❌ You already have a passphrase set. Contact support to reset it.");
+            return reply("❌ You already have a passphrase set. Contact support to reset it. by typing .report");
         }
 
         // Set the passphrase
         await setPassphrase(sender, passphrase);
-        reply("🔐 Passphrase set successfully! You can now use your diary.");
+        reply("🔐 Passphrase set successfully ✅! You can now use your diary.✨");
     } catch (error) {
         console.error("Error:", error); // Log the error
         reply("*Error: Unable to set passphrase. Please try again later.*");
@@ -185,7 +185,7 @@ cmd({
 
         const note = body.split(' ').slice(1).join(' '); // Extract the note text
         if (!note) {
-            return reply("⚠️ Please provide a note to add. Example: `.diaryadd Today was a great day!`");
+            return reply("⚠️ Please provide a note to add. Example: `.diaryadd Today was a great day with Subzero!`");
         }
 
         // Save the note to the database
@@ -207,7 +207,7 @@ cmd({
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
                     newsletterJid: '120363304325601080@newsletter',
-                    newsletterName: '𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃🎀',
+                    newsletterName: '𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 🎀',
                     serverMessageId: 143
                 }
             }
@@ -348,7 +348,7 @@ cmd({
         }
 
         // Format the notes as a numbered list
-        let diaryList = "📖 `SUBZERO USER DIARY`  📖\n\n⟣━━━━━━━━━━━━━━━━⟢\n\n";
+        let diaryList = "📕 `SUBZERO USER DIARY`  📕\n\n⟣━━━━━━━━━━━━━━━━⟢\n\n";
         notes.forEach((note, index) => {
             diaryList += `*🔖 ${index + 1}. ${note.note}*\n` +
                          `📆 _Time: ${new Date(note.timestamp).toLocaleString('en-US', { timeZone: 'Africa/Harare' })}_\n\n`; // Use Harare time
