@@ -8,8 +8,13 @@ const config = require('../config');
 const { cmd, commands } = require('../command');
 
 
+//  SUBZERO MD PROPERTY
+// MADE BY MR FRANK
+// REMOVE THIS IF YOU ARE GAY
+
+
 cmd({
-  pattern: 'video',
+  pattern: 'videonew',
   alias: ['videodoc', 'film', 'mp4'],
   react: '🎥',
   desc: 'Search and download videos from YouTube',
@@ -62,57 +67,40 @@ cmd({
     }
 
     // Check if a valid download URL was found
-    if (!downloadData || !downloadData.success) {
+    if (!downloadData || !downloadData.success || !downloadData.result?.download_url) {
       return reply('Failed to retrieve download URL from all sources. Please try again later.');
     }
 
     const downloadUrl = downloadData.result.download_url;
     const videoDetails = downloadData.result;
 
-    // Sample link for GitHub repo or WhatsApp channel
-    const sampleLink = 'https://github.com/MrFrankAlpha/SUBZERO-MD'; // Replace with your desired link
+    // Validate the download URL
+    if (!downloadUrl || typeof downloadUrl !== 'string' || !downloadUrl.startsWith('http')) {
+      return reply('Invalid download URL. Please try again.');
+    }
 
     // Prepare the message payload with external ad details
-    const messagePayloads = [
-      {
-        video: { url: downloadUrl },
-        mimetype: 'video/mp4',
-        contextInfo: {
-          externalAdReply: {
-            title: videoDetails.title,
-            body: videoDetails.title,
-            mediaType: 1,
-            sourceUrl: sampleLink, // Replaced conf.GURL with sampleLink
-            thumbnailUrl: firstVideo.thumbnail,
-            renderLargerThumbnail: false,
-            showAdAttribution: true,
-          },
+    const messagePayload = {
+      video: { url: downloadUrl },
+      mimetype: 'video/mp4',
+      caption: `*${videoDetails.title || 'Downloaded by SUBZERO-MD'}*`,
+      contextInfo: {
+        externalAdReply: {
+          title: videoDetails.title || 'SUBZERO-MD Video Download',
+          body: 'Powered by SUBZERO-MD',
+          mediaType: 1,
+          sourceUrl: 'https://github.com/MrFrank-ofc/SUBZERO-BOT', // Replace with your desired link
+          thumbnailUrl: firstVideo.thumbnail || 'https://i.imgur.com/v9gJCSD.jpeg',
+          renderLargerThumbnail: true,
         },
       },
-      {
-        document: { url: downloadUrl },
-        mimetype: 'video/mp4',
-        contextInfo: {
-          externalAdReply: {
-            title: videoDetails.title,
-            body: videoDetails.title,
-            mediaType: 1,
-            sourceUrl: sampleLink, // Replaced conf.GURL with sampleLink
-            thumbnailUrl: firstVideo.thumbnail,
-            renderLargerThumbnail: false,
-            showAdAttribution: true,
-          },
-        },
-      }
-    ];
+    };
 
-    // Send the download link to the user
-    for (const messagePayload of messagePayloads) {
-      await conn.sendMessage(from, messagePayload, { quoted: mek });
-    }
+    // Send the video
+    await conn.sendMessage(from, messagePayload, { quoted: mek });
 
   } catch (error) {
     console.error('Error during download process:', error);
-    return reply(`Download failed due to an error: ${error.message || error}`);
+    reply(`Download failed due to an error: ${error.message || error}`);
   }
 });
