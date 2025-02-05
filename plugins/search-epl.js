@@ -1,3 +1,7 @@
+//  SUBZERO MD PROPERTY
+// MADE BY MR FRANK
+// REMOVE THIS IF YOU ARE GAY
+
 
 const axios = require('axios');
 const config = require('../config');
@@ -68,7 +72,7 @@ cmd({
     // Access the standings from the "data" property as per your original snippet
     const standings = data.data;
     
-    let message = '🏆 *\`BUNDESLIGA TABLE STANDINGS\`* 🏆\n\n';
+    let message = '🏆 *\`BUNDESLIGA STANDINGS\`* 🏆\n\n';
     
     if (Array.isArray(standings)) {
       standings.forEach(team => {
@@ -81,7 +85,7 @@ cmd({
         
         // Send the standings with an image
     await conn.sendMessage(from, {
-      image: { url: `https://i.ibb.co/4g5ZZnWZ/mrfrankofc.jpg` }, // Image URL
+      image: { url: `https://i.ibb.co/KjBxCbrM/mrfrankofc.jpg` }, // Image URL
       caption: message,
       contextInfo: {
         mentionedJid: [m.sender],
@@ -129,7 +133,7 @@ cmd({
         
         // Send the standings with an image
     await conn.sendMessage(from, {
-      image: { url: `https://i.ibb.co/4g5ZZnWZ/mrfrankofc.jpg` }, // Image URL
+      image: { url: `https://i.ibb.co/JRCwLzd1/mrfrankofc.jpg` }, // Image URL
       caption: message,
       contextInfo: {
         mentionedJid: [m.sender],
