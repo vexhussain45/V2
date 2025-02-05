@@ -226,7 +226,7 @@ Support      : wa.me/18062212660
 // MADE BY MR FRANK
 // REMOVE THIS IF YOU ARE GAY
 
-const axios = require('axios');
+/*const axios = require('axios');
 const { cmd } = require('../command');
 const { fetchJson } = require('../lib/functions');
 
@@ -515,3 +515,5 @@ const fetchLogoUrl = async (url, name) => {
     return null;
   }
 };
+
+*/
