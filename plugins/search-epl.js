@@ -38,7 +38,6 @@ cmd({
 
  */
 const axios = require('axios');
-const config = require('../config');
 const { cmd } = require('../command');
 const { fetchJson } = require('../lib/functions');
 
@@ -50,31 +49,34 @@ cmd({
   filename: __filename
 }, async (conn, mek, m, { from, reply }) => {
   try {
-    // Retrieve the data from the API
-    const data = await fetchJson('https://api.dreaded.site/api/standings/PL');
+    // Fetch data from the API
+    const response = await fetchJson('https://api.dreaded.site/api/standings/PL');
     
-    // Access the standings from the "data" property
-    const standings = data.data;
+    // Log the entire response to understand its structure
+    console.log('API response:', response);
     
-    // Initialize the message with the header
-    let message = '🏆 *EPL TABLE STANDINGS*\n\n';
+    // Access the standings data
+    const standings = response.data;
     
-    // Check if standings is an array
-    if (Array.isArray(standings)) {
+    // Check if standings is an array and has elements
+    if (Array.isArray(standings) && standings.length > 0) {
+      // Initialize the message with a header
+      let message = '🏆 *EPL TABLE STANDINGS*\n\n';
+      
+      // Iterate over the standings array to build the message
       standings.forEach(team => {
         message += `${team.position}. ${team.team} - ${team.points} points\n`;
       });
+      
+      // Send the constructed message
+      await conn.sendMessage(from, { text: message }, { quoted: mek });
     } else {
-      // If standings is not an array, handle accordingly
-      message += 'Standings data is not available.';
+      // If standings data is not available or empty
+      reply('Standings data is not available.');
     }
-    
-    // Send the message as plain text
-    await conn.sendMessage(from, { text: message }, { quoted: mek });
   } catch (error) {
+    // Log any errors encountered during the process
     console.error('Error fetching EPL standings:', error);
     reply('Something went wrong. Unable to fetch EPL standings.');
   }
 });
-
-
