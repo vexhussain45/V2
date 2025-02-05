@@ -21,7 +21,7 @@ cmd({
     
     if (Array.isArray(standings)) {
       standings.forEach(team => {
-        message += `${team.position}. ${team.team} - ${team.points} pts\n`;
+        message += `${team.position}. ${team.team} - ${team.points} pts \n\n `;
       });
     } else {
       // In case the structure is different, display the raw data
