@@ -1,4 +1,4 @@
-//  SUBZERO MD PROPERTY
+// SUBZERO MD PROPERTY
 // MADE BY MR FRANK
 // REMOVE THIS IF YOU ARE GAY
 
@@ -39,30 +39,31 @@ const riddles = [
 // Store user progress (current riddle index)
 const userProgress = new Map();
 
-cmd({
-  pattern: 'riddle',
-  alias: ['riddles'],
-  react: '🤔',
-  desc: 'Play a riddle game with multiple-choice answers',
-  category: 'Fun',
-  filename: __filename
-}, async (conn, mek, m, { from, reply, sender }) => {
-  try {
-    // Get or initialize user progress
-    let currentIndex = userProgress.get(sender) || 0;
+const setupRiddlePlugin = (conn) => {
+  cmd({
+    pattern: 'riddle',
+    alias: ['riddles'],
+    react: '🤔',
+    desc: 'Play a riddle game with multiple-choice answers',
+    category: 'Fun',
+    filename: __filename
+  }, async (conn, mek, m, { from, reply, sender }) => {
+    try {
+      // Get or initialize user progress
+      let currentIndex = userProgress.get(sender) || 0;
 
-    // If user has completed all riddles, reset progress
-    if (currentIndex >= riddles.length) {
-      currentIndex = 0;
-      userProgress.set(sender, 0);
-    }
+      // If user has completed all riddles, reset progress
+      if (currentIndex >= riddles.length) {
+        currentIndex = 0;
+        userProgress.set(sender, 0);
+      }
 
-    // Get a random riddle
-    const randomIndex = Math.floor(Math.random() * riddles.length);
-    const riddle = riddles[randomIndex];
+      // Get a random riddle
+      const randomIndex = Math.floor(Math.random() * riddles.length);
+      const riddle = riddles[randomIndex];
 
-    // Format the riddle message
-    const riddleMessage = `
+      // Format the riddle message
+      const riddleMessage = `
 🤔 *Riddle Time!* 🤔
 
 ${riddle.question}
@@ -75,40 +76,44 @@ D) ${riddle.options.D}
 Reply with A, B, C, or D to answer!
 `;
 
-    // Send the riddle
-    await reply(riddleMessage);
+      // Send the riddle
+      await reply(riddleMessage);
 
-    // Store the correct answer for the user
-    userProgress.set(sender, { index: randomIndex, answer: riddle.answer });
+      // Store the correct answer for the user
+      userProgress.set(sender, { index: randomIndex, answer: riddle.answer });
 
-  } catch (error) {
-    console.error('Error in riddle plugin:', error);
-    reply('An error occurred while fetching the riddle. Please try again.');
-  }
-});
-
-// Event listener for user responses
-conn.ev.on('messages.upsert', async (update) => {
-  const message = update.messages[0];
-  if (!message.message || !message.message.extendedTextMessage) return;
-
-  const sender = message.key.remoteJid;
-  const userAnswer = message.message.extendedTextMessage.text.trim().toUpperCase();
-
-  // Check if the user is playing the riddle game
-  if (userProgress.has(sender)) {
-    const { index, answer } = userProgress.get(sender);
-
-    // Validate the answer
-    if (['A', 'B', 'C', 'D'].includes(userAnswer)) {
-      if (userAnswer === answer) {
-        await conn.sendMessage(sender, { text: '🎉 *Correct!* 🎉\nLet\'s move to the next riddle!' }, { quoted: message });
-        userProgress.delete(sender); // Reset for the next riddle
-      } else {
-        await conn.sendMessage(sender, { text: '❌ *Wrong!* ❌\nTry again!' }, { quoted: message });
-      }
-    } else {
-      await conn.sendMessage(sender, { text: '⚠️ Invalid choice! Please reply with A, B, C, or D.' }, { quoted: message });
+    } catch (error) {
+      console.error('Error in riddle plugin:', error);
+      reply('An error occurred while fetching the riddle. Please try again.');
     }
-  }
-});
+  });
+
+  // Event listener for user responses
+  conn.ev.on('messages.upsert', async (update) => {
+    const message = update.messages[0];
+    if (!message.message || !message.message.extendedTextMessage) return;
+
+    const sender = message.key.remoteJid;
+    const userAnswer = message.message.extendedTextMessage.text.trim().toUpperCase();
+
+    // Check if the user is playing the riddle game
+    if (userProgress.has(sender)) {
+      const { index, answer } = userProgress.get(sender);
+
+      // Validate the answer
+      if (['A', 'B', 'C', 'D'].includes(userAnswer)) {
+        if (userAnswer === answer) {
+          await conn.sendMessage(sender, { text: '🎉 *Correct!* 🎉\nLet\'s move to the next riddle!' }, { quoted: message });
+          userProgress.delete(sender); // Reset for the next riddle
+        } else {
+          await conn.sendMessage(sender, { text: '❌ *Wrong!* ❌\nTry again!' }, { quoted: message });
+        }
+      } else {
+        await conn.sendMessage(sender, { text: '⚠️ Invalid choice! Please reply with A, B, C, or D.' }, { quoted: message });
+      }
+    }
+  });
+};
+
+// Export the setup function
+module.exports = setupRiddlePlugin;
