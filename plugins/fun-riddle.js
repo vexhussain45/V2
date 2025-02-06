@@ -2,7 +2,7 @@
 // MADE BY MR FRANK
 // REMOVE THIS IF YOU ARE GAY
 
-const config = require('../config');
+/* const config = require('../config');
 const { cmd, commands } = require('../command');
 const axios = require('axios');
 
@@ -117,3 +117,4 @@ Reply with A, B, C, or D to answer!
 
 // Export the setup function
 module.exports = setupRiddlePlugin;
+*/
