@@ -4,7 +4,85 @@
 
 const axios = require('axios');
 const config = require('../config');
+
 const { cmd } = require('../command');
+const { fetchJson } = require('../lib/functions');
+
+// Function to fetch and display league standings
+async function fetchStandings(league, leagueName, imageUrl) {
+  return async (conn, mek, m, { from, reply }) => {
+    try {
+      // Fetch data from the API
+      const data = await fetchJson(`https://api.dreaded.site/api/standings/${league}`);
+      const standings = data.data;
+
+      let message = `🏆 *\`${leagueName} STANDINGS\`* 🏆\n\n`;
+
+      if (Array.isArray(standings)) {
+        standings.forEach((team) => {
+          message += `${team.position}. ${team.team} - ${team.points} pts\n`;
+        });
+        // Add footer
+        message += '\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ sᴜʙᴢᴇʀᴏ ʙᴏᴛ\n';
+      } else {
+        message += standings; // Fallback if data structure is unexpected
+      }
+
+      // Send the standings with an image
+      await conn.sendMessage(from, {
+        image: { url: imageUrl }, // Image URL
+        caption: message,
+        contextInfo: {
+          mentionedJid: [m.sender],
+          forwardingScore: 999,
+          isForwarded: true,
+          forwardedNewsletterMessageInfo: {
+            newsletterJid: '120363304325601080@newsletter',
+            newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+            serverMessageId: 143,
+          },
+        },
+      }, { quoted: mek });
+    } catch (error) {
+      console.error(`Error fetching ${leagueName} standings:`, error);
+      reply(`Something went wrong. Unable to fetch ${leagueName} standings.`);
+    }
+  };
+}
+
+// EPL Command
+cmd({
+  pattern: 'epl',
+  alias: ['englishpremierleague', 'premierleague'],
+  react: '⚽',
+  desc: 'Display current EPL standings',
+  category: 'sports',
+  filename: __filename,
+}, fetchStandings('PL', 'EPL', 'https://i.ibb.co/4g5ZZnWZ/mrfrankofc.jpg'));
+
+// Bundesliga Command
+cmd({
+  pattern: 'bundesliga',
+  alias: ['bundes', 'bliga'],
+  react: '⚽',
+  desc: 'Display current Bundesliga standings',
+  category: 'sports',
+  filename: __filename,
+}, fetchStandings('BL1', 'BUNDESLIGA', 'https://i.ibb.co/KjBxCbrM/mrfrankofc.jpg'));
+
+// La Liga Command
+cmd({
+  pattern: 'laliga',
+  alias: ['llga', 'laliga'],
+  react: '⚽',
+  desc: 'Display current La Liga standings',
+  category: 'sports',
+  filename: __filename,
+}, fetchStandings('PD', 'LALIGA', 'https://i.ibb.co/JRCwLzd1/mrfrankofc.jpg'));
+
+
+
+/*const { cmd } = require('../command');
 const { fetchJson } = require('../lib/functions');
 
 cmd({
@@ -160,6 +238,24 @@ cmd({
     reply('Something went wrong. Unable to fetch La Liga standings.');
   }
 });
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // DADDY FRANK OFFICIAL
 
