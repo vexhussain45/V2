@@ -264,6 +264,7 @@ async (conn, mek, m, { from, prefix, quoted, q, reply }) => {
     }
 });
 // pair 2
+/*
 
 cmd({
     pattern: "pair2",
@@ -311,3 +312,4 @@ async (conn, mek, m, { from, prefix, quoted, q, reply }) => {
         await reply("An error occurred. Please try again later.");
     }
 });
+*/
