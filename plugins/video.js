@@ -14,8 +14,8 @@ const { cmd, commands } = require('../command');
 
 
 cmd({
-  pattern: 'videonew',
-  alias: ['videodoc', 'film', 'mp4'],
+  pattern: 'video',
+  alias: ['ytmp4', 'vid', 'ytvid'],
   react: '🎥',
   desc: 'Search and download videos from YouTube',
   category: 'Search',
@@ -24,7 +24,7 @@ cmd({
   try {
     // Check if a query is provided
     if (!args[0]) {
-      return reply('Please provide a video name.');
+      return reply('*Please provide a video name. Eg* `.video` *Lily*');
     }
 
     const query = args.join(' ');
@@ -83,11 +83,11 @@ cmd({
     const messagePayload = {
       video: { url: downloadUrl },
       mimetype: 'video/mp4',
-      caption: `*${videoDetails.title || 'Downloaded by SUBZERO-MD'}*`,
+      caption: `*${videoDetails.title || 'Downloaded by SUBZERO-MD ✅'}*`,
       contextInfo: {
         externalAdReply: {
           title: videoDetails.title || 'SUBZERO-MD Video Download',
-          body: 'Powered by SUBZERO-MD',
+          body: 'Powered by SUBZERO-MD ❄️',
           mediaType: 1,
           sourceUrl: 'https://github.com/MrFrank-ofc/SUBZERO-BOT', // Replace with your desired link
           thumbnailUrl: firstVideo.thumbnail || 'https://i.imgur.com/v9gJCSD.jpeg',
