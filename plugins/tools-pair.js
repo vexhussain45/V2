@@ -266,8 +266,8 @@ async (conn, mek, m, { from, prefix, quoted, q, reply }) => {
 // pair 2
 
 cmd({
-    pattern: "pair",
-    alias: ["getpair", "paircode"],
+    pattern: "pair2",
+    alias: ["getpair2", "paircode2"],
     react: "✅",
     desc: "Pairing code",
     category: "download",
