@@ -207,6 +207,7 @@ Support      : wa.me/18062212660
 
 
 const axios = require("axios");
+const config = require('../config');
 const { cmd } = require('../command');
 
 cmd({
@@ -256,7 +257,7 @@ async (conn, mek, m, { from, reply, q }) => {
   }
 });
 
-
+*/
 
 
 // Want My Code ?
@@ -376,4 +377,40 @@ async (conn, mek, m, {
   }
 });
 */
+/*const { cmd } = require("../command");
+const axios = require("axios");
 
+cmd({
+  pattern: "screenshot",
+  alias: ["ss", "capture"],
+  desc: "Capture a full-page screenshot of a website.",
+  category: "utility",
+  use: ".screenshot <url>",
+  filename: __filename,
+}, async (conn, mek, msg, { from, args, reply }) => {
+  try {
+    const url = args[0];
+    if (!url) {
+      return reply("❌ Please provide a valid URL. Example: `.screenshot https://google.com`");
+    }
+
+    // Validate the URL
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      return reply("❌ Invalid URL. Please include 'http://' or 'https://'.");
+    }
+
+    // Generate the screenshot URL using Thum.io API
+    const screenshotUrl = `https://image.thum.io/get/fullpage/${url}`;
+
+    // Send the screenshot as an image
+    await conn.sendMessage(from, {
+      image: { url: screenshotUrl },
+      caption: `🌐 *Website Screenshot*:\n\n${url}`,
+    }, { quoted: mek });
+
+  } catch (error) {
+    console.error("Error capturing screenshot:", error);
+    reply("❌ Unable to capture the screenshot. Please check the URL and try again.");
+  }
+});
+*/
