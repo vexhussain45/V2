@@ -53,6 +53,7 @@
     "acrcloud": "^1.4.0",
     "mongoose": "^8.0.0",
     "node-cache" :"^5.1.1",
+    "wikipedia": "^2.1.2",
     "dotenv": "^16.0.0"   
   }
 }
