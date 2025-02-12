@@ -243,7 +243,7 @@ cmd({
     // Send the screenshot as an image message
     await conn.sendMessage(from, {
       image: { url: screenshotUrl },
-      caption: `     *📷 Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ 📸*\n\n🌐 *Website URL 👇:\n${url}*`,
+      caption: `  *📷 Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ 📸*\n\n🌐 *Website URL 👇:* \n${url}`,
       contextInfo: {
         mentionedJid: [msg.sender], // Fix: Use `msg.sender` instead of `m.sender`
         forwardingScore: 999,
