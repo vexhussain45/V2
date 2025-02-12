@@ -1,7 +1,7 @@
-/* const config = require('../config');
-const {cmd , commands} = require('../command');
+const config = require('../config');
 const { cmd } = require("../command");
 const Notice = require("../models/Notice");
+const mongoose = require("mongoose");
 
 // Owner ID (only this user can add/delete notices)
 const OWNER_ID = "263719647303";
@@ -9,23 +9,27 @@ const OWNER_ID = "263719647303";
 // Add Notice
 cmd({
   pattern: "addnotice",
-  desc: "Add a new notice (owner only).",
+  react: "🚀",
+  desc: "Add a new notice to the noticeboard (Owner Only).",
   category: "utility",
-  use: ".addnotice <notice message>",
-  filename: __filename
+  use: ".addnotice <message>",
+  filename: __filename,
 }, async (conn, mek, msg, { from, args, reply }) => {
-  if (from !== OWNER_ID) {
-    return reply("❌ You are not authorized to add notices.");
-  }
-
-  const noticeMessage = args.join(" ");
-  if (!noticeMessage) {
-    return reply("❌ Please provide a notice message.");
-  }
-
   try {
-    const newNotice = new Notice({ message: noticeMessage });
+    // Check if the user is the owner
+    if (from !== OWNER_ID) {
+      return reply("❌ You are not authorized to add notices.");
+    }
+
+    const message = args.join(" ");
+    if (!message) {
+      return reply("❌ Please provide a notice message.");
+    }
+
+    // Save the notice to the database
+    const newNotice = new Notice({ message });
     await newNotice.save();
+
     reply("✅ Notice added successfully!");
   } catch (error) {
     console.error("Error adding notice:", error);
@@ -36,28 +40,28 @@ cmd({
 // Delete Notice
 cmd({
   pattern: "noticedelete",
-  desc: "Delete a notice by its index (owner only).",
+  desc: "Delete a notice by its ID (Owner Only).",
   category: "utility",
-  use: ".noticedelete <notice index>",
-  filename: __filename
+  use: ".noticedelete <notice_id>",
+  filename: __filename,
 }, async (conn, mek, msg, { from, args, reply }) => {
-  if (from !== OWNER_ID) {
-    return reply("❌ You are not authorized to delete notices.");
-  }
-
-  const noticeIndex = parseInt(args[0]) - 1; // Convert to 0-based index
-  if (isNaN(noticeIndex) || noticeIndex < 0) {
-    return reply("❌ Please provide a valid notice index.");
-  }
-
   try {
-    const notices = await Notice.find().sort({ timestamp: 1 });
-    if (noticeIndex >= notices.length) {
-      return reply("❌ Invalid notice index.");
+    // Check if the user is the owner
+    if (from !== OWNER_ID) {
+      return reply("❌ You are not authorized to delete notices.");
     }
 
-    const noticeToDelete = notices[noticeIndex];
-    await Notice.findByIdAndDelete(noticeToDelete._id);
+    const noticeId = args[0];
+    if (!noticeId) {
+      return reply("❌ Please provide a notice ID to delete.");
+    }
+
+    // Delete the notice from the database
+    const deletedNotice = await Notice.findByIdAndDelete(noticeId);
+    if (!deletedNotice) {
+      return reply("❌ Notice not found.");
+    }
+
     reply("✅ Notice deleted successfully!");
   } catch (error) {
     console.error("Error deleting notice:", error);
@@ -65,29 +69,32 @@ cmd({
   }
 });
 
-// Display Notice Board
+// View Noticeboard
 cmd({
   pattern: "noticeboard",
-  desc: "Display all notices.",
+  react: "🗳️",
+  desc: "View the noticeboard with all updates.",
   category: "utility",
   use: ".noticeboard",
-  filename: __filename
+  filename: __filename,
 }, async (conn, mek, msg, { from, reply }) => {
   try {
-    const notices = await Notice.find().sort({ timestamp: 1 });
+    // Fetch all notices from the database
+    const notices = await Notice.find().sort({ timestamp: -1 });
+
     if (notices.length === 0) {
-      return reply("📢 No notices available.");
+      return reply("📭 No notices available.");
     }
 
-    let noticeList = "*📢 NEWS FEATURES 📢*\n\n";
+    // Format the notices into a message
+    let noticeMessage = "*📢 NEWS FEATURES 📢*\n\n";
     notices.forEach((notice, index) => {
-      noticeList += `${index + 1}. ${notice.message}\n`;
+      noticeMessage += `${index + 1}. ${notice.message}\n`;
     });
 
-    reply(noticeList);
+    reply(noticeMessage);
   } catch (error) {
     console.error("Error fetching notices:", error);
-    reply("❌ An error occurred while fetching notices.");
+    reply("❌ An error occurred while fetching the noticeboard.");
   }
 });
-*/
