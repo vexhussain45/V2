@@ -266,7 +266,7 @@ cmd({
           serverMessageId: 143,
         },
       },
-    }, { quoted: m });
+    }, { quoted: mek });
 
   } catch (error) {
     console.error("Error:", error); // Log the error for debugging
