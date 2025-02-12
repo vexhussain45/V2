@@ -1,7 +1,5 @@
 const { cmd } = require("../command");
 const { PDFDocument, StandardFonts, rgb } = require("pdf-lib");
-const fs = require("fs");
-const path = require("path");
 
 cmd({
   pattern: "texttopdf",
@@ -34,28 +32,16 @@ cmd({
       color: rgb(0, 0, 0),
     });
 
-    // Save the PDF to a file
+    // Save the PDF to a buffer
     const pdfBytes = await pdfDoc.save();
-    const tempDir = path.join(__dirname, "../temp");
-
-    // Create the temp directory if it doesn't exist
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true });
-    }
-
-    const filePath = path.join(tempDir, "text.pdf");
-    fs.writeFileSync(filePath, pdfBytes);
 
     // Send the PDF as a document
     await conn.sendMessage(from, {
-      document: { url: `file://${filePath}` },
+      document: pdfBytes, // Send the PDF buffer directly
       mimetype: "application/pdf",
       fileName: "text.pdf",
       caption: "📄 *Text to PDF*\n\nHere's your PDF file!",
     }, { quoted: mek });
-
-    // Delete the temporary file after sending
-    fs.unlinkSync(filePath);
 
   } catch (error) {
     console.error("Error generating PDF:", error);
