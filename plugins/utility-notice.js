@@ -3,13 +3,13 @@ const { cmd } = require("../command");
 const Notice = require("../models/Notice");
 const mongoose = require("mongoose");
 
+
 // Owner ID (only this user can add/delete notices)
-const OWNER_ID = "+263719647303";
+const OWNER_ID = "263719647303"; // Replace with the owner's WhatsApp number in the correct format
 
 // Add Notice
 cmd({
   pattern: "addnotice",
-  react: "🚀",
   desc: "Add a new notice to the noticeboard (Owner Only).",
   category: "utility",
   use: ".addnotice <message>",
@@ -17,10 +17,11 @@ cmd({
 }, async (conn, mek, msg, { from, args, reply }) => {
   try {
     // Check if the user is the owner
-  /*  if (from !== OWNER_ID) {
+    const sender = mek.participant || mek.key.remoteJid; // Get the sender's ID
+    if (sender !== OWNER_ID) {
       return reply("❌ You are not authorized to add notices.");
     }
-*/
+
     const message = args.join(" ");
     if (!message) {
       return reply("❌ Please provide a notice message.");
@@ -47,10 +48,11 @@ cmd({
 }, async (conn, mek, msg, { from, args, reply }) => {
   try {
     // Check if the user is the owner
-  /*  if (from !== OWNER_ID) {
+    const sender = mek.participant || mek.key.remoteJid; // Get the sender's ID
+    if (sender !== OWNER_ID) {
       return reply("❌ You are not authorized to delete notices.");
     }
-*/
+
     const noticeId = args[0];
     if (!noticeId) {
       return reply("❌ Please provide a notice ID to delete.");
@@ -72,7 +74,6 @@ cmd({
 // View Noticeboard
 cmd({
   pattern: "noticeboard",
-  react: "🗳️",
   desc: "View the noticeboard with all updates.",
   category: "utility",
   use: ".noticeboard",
@@ -89,7 +90,7 @@ cmd({
     // Format the notices into a message
     let noticeMessage = "*📢 NEWS FEATURES 📢*\n\n";
     notices.forEach((notice, index) => {
-      noticeMessage += `${index + 1}. ${notice.message}\n`;
+      noticeMessage += `${index + 1}. ${notice.message} (ID: ${notice._id})\n`;
     });
 
     reply(noticeMessage);
