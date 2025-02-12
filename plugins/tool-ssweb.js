@@ -208,7 +208,7 @@ Support      : wa.me/18062212660
 
 const axios = require("axios");
 const config = require('../config');
-const { cmd } = require('../command');
+/*const { cmd } = require('../command');
 
 cmd({
   pattern: "ss",
@@ -259,7 +259,7 @@ async (conn, mek, m, { from, reply, q }) => {
 
 
 
-
+*/
 // Want My Code ?
 // Give Credits To Mr Frank
 //wa.me/18062212660
@@ -376,7 +376,7 @@ async (conn, mek, m, {
     reply("Failed to capture the screenshot. Please try again.");
   }
 });
-*/
+
 /*const { cmd } = require("../command");
 const axios = require("axios");
 
@@ -413,4 +413,4 @@ cmd({
     reply("❌ Unable to capture the screenshot. Please check the URL and try again.");
   }
 });
-*/
+
