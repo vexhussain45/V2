@@ -1,71 +1,62 @@
 
 const config = require('../config');
 const { cmd, commands } = require('../command');
-const crypto = require("crypto");
 
-// Encryption key (must be kept secret)
-const ENCRYPTION_KEY = "mrfrank-263"; // Replace with your own secret key
-const ALGORITHM = "aes-256-cbc";
 
-// Encrypt function
-function encrypt(text) {
-  const iv = crypto.randomBytes(16); // Initialization vector
-  const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
-  let encrypted = cipher.update(text, "utf8", "hex");
-  encrypted += cipher.final("hex");
-  return `${iv.toString("hex")}:${encrypted}`;
-}
-
-// Decrypt function
-function decrypt(text) {
-  const [ivHex, encryptedText] = text.split(":");
-  const iv = Buffer.from(ivHex, "hex");
-  const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
-  let decrypted = decipher.update(encryptedText, "hex", "utf8");
-  decrypted += decipher.final("utf8");
-  return decrypted;
-}
+const { cmd } = require("../command");
+const JavaScriptObfuscator = require("javascript-obfuscator");
 
 cmd({
-  pattern: "encrypt",
-  alias: ["enc"],
-  desc: "Encrypt JavaScript code.",
+  pattern: "obfuscate",
+  alias: ["obf", "confuse"],
+  desc: "Obfuscate JavaScript code to make it harder to read.",
   category: "utility",
-  use: ".encrypt <code>",
+  use: ".obfuscate <code>",
   filename: __filename,
 }, async (conn, mek, msg, { from, args, reply }) => {
   try {
     const code = args.join(" ");
     if (!code) {
-      return reply("❌ Please provide JavaScript code to encrypt.");
+      return reply("❌ Please provide JavaScript code to obfuscate.");
     }
 
-    const encryptedCode = encrypt(code);
-    reply(`🔐 *Encrypted Code*:\n\n${encryptedCode}`);
+    // Obfuscate the code
+    const obfuscatedCode = JavaScriptObfuscator.obfuscate(code, {
+      compact: true, // Compact code output
+      controlFlowFlattening: true, // Make control flow harder to follow
+      deadCodeInjection: true, // Inject dead code
+      debugProtection: true, // Add debug protection
+      disableConsoleOutput: true, // Disable console output
+      stringArray: true, // Encrypt strings
+      stringArrayEncoding: ["base64"], // Encode strings using base64
+      rotateStringArray: true, // Rotate string array
+    }).getObfuscatedCode();
+
+    reply(`🔐 *Obfuscated Code*:\n\n${obfuscatedCode}`);
   } catch (error) {
-    console.error("Error encrypting code:", error);
-    reply("❌ An error occurred while encrypting the code.");
+    console.error("Error obfuscating code:", error);
+    reply("❌ An error occurred while obfuscating the code.");
   }
 });
 
 cmd({
-  pattern: "decrypt",
-  alias: ["dec"],
-  desc: "Decrypt JavaScript code.",
+  pattern: "deobfuscate",
+  alias: ["deobf", "unconfuse"],
+  desc: "Attempt to deobfuscate JavaScript code (limited functionality).",
   category: "utility",
-  use: ".decrypt <encrypted_code>",
+  use: ".deobfuscate <obfuscated_code>",
   filename: __filename,
 }, async (conn, mek, msg, { from, args, reply }) => {
   try {
-    const encryptedCode = args.join(" ");
-    if (!encryptedCode) {
-      return reply("❌ Please provide encrypted code to decrypt.");
+    const obfuscatedCode = args.join(" ");
+    if (!obfuscatedCode) {
+      return reply("❌ Please provide obfuscated code to deobfuscate.");
     }
 
-    const decryptedCode = decrypt(encryptedCode);
-    reply(`🔓 *Decrypted Code*:\n\n${decryptedCode}`);
+    // Deobfuscation is not straightforward, but we can try to format the code
+    reply(`⚠️ *Deobfuscation is not guaranteed*. Here's the formatted code:\n\n${obfuscatedCode}`);
   } catch (error) {
-    console.error("Error decrypting code:", error);
-    reply("❌ An error occurred while decrypting the code.");
+    console.error("Error deobfuscating code:", error);
+    reply("❌ An error occurred while deobfuscating the code.");
   }
 });
