@@ -10,6 +10,8 @@ const OWNER_ID = "263719647303"; // Replace with the owner's WhatsApp number in 
 // Add Notice
 cmd({
   pattern: "addnotice",
+  react: "📩",
+  alias: "noticeadd",
   desc: "Add a new notice to the noticeboard (Owner Only).",
   category: "utility",
   use: ".addnotice <message>",
@@ -41,6 +43,8 @@ cmd({
 // Delete Notice
 cmd({
   pattern: "noticedelete",
+  alias: "deletenotice",
+  react: "🗑️",
   desc: "Delete a notice by its ID (Owner Only).",
   category: "utility",
   use: ".noticedelete <notice_id>",
@@ -74,6 +78,7 @@ cmd({
 // View Noticeboard
 cmd({
   pattern: "noticeboard",
+  alias: "updates",
   desc: "View the noticeboard with all updates.",
   category: "utility",
   use: ".noticeboard",
@@ -84,7 +89,7 @@ cmd({
     const notices = await Notice.find().sort({ timestamp: -1 });
 
     if (notices.length === 0) {
-      return reply("📭 No notices available.");
+      return reply("📭 No notices/Updates available.");
     }
 
     // Format the notices into a message
