@@ -1,5 +1,6 @@
 const { cmd } = require("../command");
 const { PDFDocument, StandardFonts, rgb } = require("pdf-lib");
+const { Readable } = require("stream");
 
 cmd({
   pattern: "texttopdf",
@@ -35,9 +36,12 @@ cmd({
     // Save the PDF to a buffer
     const pdfBytes = await pdfDoc.save();
 
+    // Convert the buffer to a readable stream
+    const pdfStream = Readable.from(pdfBytes);
+
     // Send the PDF as a document
     await conn.sendMessage(from, {
-      document: pdfBytes, // Send the PDF buffer directly
+      document: pdfStream, // Send the PDF as a stream
       mimetype: "application/pdf",
       fileName: "text.pdf",
       caption: "📄 *Text to PDF*\n\nHere's your PDF file!",
