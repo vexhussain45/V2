@@ -4,7 +4,7 @@ const Notice = require("../models/Notice");
 const mongoose = require("mongoose");
 
 // Owner ID (only this user can add/delete notices)
-const OWNER_ID = "263719647303";
+const OWNER_ID = "+263719647303";
 
 // Add Notice
 cmd({
