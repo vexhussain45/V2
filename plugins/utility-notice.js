@@ -17,10 +17,10 @@ cmd({
 }, async (conn, mek, msg, { from, args, reply }) => {
   try {
     // Check if the user is the owner
-    if (from !== OWNER_ID) {
+  /*  if (from !== OWNER_ID) {
       return reply("❌ You are not authorized to add notices.");
     }
-
+*/
     const message = args.join(" ");
     if (!message) {
       return reply("❌ Please provide a notice message.");
@@ -47,10 +47,10 @@ cmd({
 }, async (conn, mek, msg, { from, args, reply }) => {
   try {
     // Check if the user is the owner
-    if (from !== OWNER_ID) {
+  /*  if (from !== OWNER_ID) {
       return reply("❌ You are not authorized to delete notices.");
     }
-
+*/
     const noticeId = args[0];
     if (!noticeId) {
       return reply("❌ Please provide a notice ID to delete.");
