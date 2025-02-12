@@ -2,10 +2,10 @@ const config = require('../config');
 const { cmd } = require("../command");
 const Notice = require("../models/Notice");
 const mongoose = require("mongoose");
-
+const axios = require("axios");
 
 // Owner ID (only this user can add/delete notices)
-const OWNER_ID = "263719647303"; // Replace with the owner's WhatsApp number in the correct format
+const OWNER_ID = "263719647303@s.whatsapp.net"; // Replace with the owner's WhatsApp number in the correct format
 
 // Add Notice
 cmd({
@@ -40,14 +40,14 @@ cmd({
   }
 });
 
-// Delete Notice
+// Delete Notice by Index
 cmd({
   pattern: "noticedelete",
   alias: "deletenotice",
   react: "🗑️",
-  desc: "Delete a notice by its ID (Owner Only).",
+  desc: "Delete a notice by its index (Owner Only).",
   category: "utility",
-  use: ".noticedelete <notice_id>",
+  use: ".noticedelete <index>",
   filename: __filename,
 }, async (conn, mek, msg, { from, args, reply }) => {
   try {
@@ -57,16 +57,20 @@ cmd({
       return reply("❌ You are not authorized to delete notices.");
     }
 
-    const noticeId = args[0];
-    if (!noticeId) {
-      return reply("❌ Please provide a notice ID to delete.");
+    const index = parseInt(args[0]) - 1; // Convert index to zero-based
+    if (isNaN(index) || index < 0) {
+      return reply("❌ Please provide a valid notice index.");
     }
 
-    // Delete the notice from the database
-    const deletedNotice = await Notice.findByIdAndDelete(noticeId);
-    if (!deletedNotice) {
-      return reply("❌ Notice not found.");
+    // Fetch all notices
+    const notices = await Notice.find().sort({ timestamp: -1 });
+    if (index >= notices.length) {
+      return reply("❌ Notice index out of range.");
     }
+
+    // Delete the notice by index
+    const noticeToDelete = notices[index];
+    await Notice.findByIdAndDelete(noticeToDelete._id);
 
     reply("✅ Notice deleted successfully!");
   } catch (error) {
@@ -75,7 +79,7 @@ cmd({
   }
 });
 
-// View Noticeboard
+// View Noticeboard with Status Message Attachment
 cmd({
   pattern: "noticeboard",
   alias: "updates",
@@ -95,10 +99,28 @@ cmd({
     // Format the notices into a message
     let noticeMessage = "*📢 NEWS FEATURES 📢*\n\n";
     notices.forEach((notice, index) => {
-      noticeMessage += `${index + 1}. ${notice.message} (ID: ${notice._id})\n`;
+      noticeMessage += `${index + 1}. ${notice.message}\n`;
     });
 
-    reply(noticeMessage);
+    // Add a footer to the message
+    noticeMessage += "\n> subzero";
+
+    // Send the noticeboard with an image (status message)
+    await conn.sendMessage(from, {
+      image: { url: `https://i.ibb.co/4g5ZZnWZ/mrfrankofc.jpg` }, // Replace with your image URL
+      caption: noticeMessage,
+      contextInfo: {
+        mentionedJid: [msg.sender],
+        forwardingScore: 999,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: '120363304325601080@newsletter',
+          newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+          serverMessageId: 143
+        }
+      }
+    }, { quoted: mek });
+
   } catch (error) {
     console.error("Error fetching notices:", error);
     reply("❌ An error occurred while fetching the noticeboard.");
