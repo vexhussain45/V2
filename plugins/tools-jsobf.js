@@ -1,9 +1,6 @@
 
 const config = require('../config');
 const { cmd, commands } = require('../command');
-
-
-const { cmd } = require("../command");
 const JavaScriptObfuscator = require("javascript-obfuscator");
 
 cmd({
