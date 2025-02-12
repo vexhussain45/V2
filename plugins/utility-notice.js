@@ -21,7 +21,7 @@ cmd({
     // Check if the user is the owner
     const sender = mek.participant || mek.key.remoteJid; // Get the sender's ID
     if (sender !== OWNER_ID) {
-      return reply("❌ You are not authorized to add notices.");
+      return reply("*[❌] You are not authorized to add notices.*");
     }
 
     const message = args.join(" ");
@@ -33,7 +33,7 @@ cmd({
     const newNotice = new Notice({ message });
     await newNotice.save();
 
-    reply("✅ Notice added successfully!");
+    reply("*✅ Notice added successfully!*");
   } catch (error) {
     console.error("Error adding notice:", error);
     reply("❌ An error occurred while adding the notice.");
@@ -54,7 +54,7 @@ cmd({
     // Check if the user is the owner
     const sender = mek.participant || mek.key.remoteJid; // Get the sender's ID
     if (sender !== OWNER_ID) {
-      return reply("❌ You are not authorized to delete notices.");
+      return reply("*[❌] You are not authorized to delete notices.*");
     }
 
     const index = parseInt(args[0]) - 1; // Convert index to zero-based
@@ -93,21 +93,21 @@ cmd({
     const notices = await Notice.find().sort({ timestamp: -1 });
 
     if (notices.length === 0) {
-      return reply("📭 No notices/Updates available.");
+      return reply("*📭 No notices/Updates available.*");
     }
 
     // Format the notices into a message
-    let noticeMessage = "*📢 NEWS FEATURES 📢*\n\n";
+    let noticeMessage = "*┅〔 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐔𝐏𝐃𝐀𝐓𝐄𝐒 〕┅*\n\n";
     notices.forEach((notice, index) => {
       noticeMessage += `${index + 1}. ${notice.message}\n`;
     });
 
     // Add a footer to the message
-    noticeMessage += "\n> subzero";
+    noticeMessage += "\n> sᴜʙᴢᴇʀᴏ ᴍᴅ ᴜᴘᴅᴀᴛᴇs";
 
     // Send the noticeboard with an image (status message)
     await conn.sendMessage(from, {
-      image: { url: `https://i.ibb.co/4g5ZZnWZ/mrfrankofc.jpg` }, // Replace with your image URL
+      image: { url: `https://i.ibb.co/dsCF80kb/mrfrankofc.jpg` }, // Replace with your image URL
       caption: noticeMessage,
       contextInfo: {
         mentionedJid: [msg.sender],
