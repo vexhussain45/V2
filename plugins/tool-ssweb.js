@@ -216,6 +216,7 @@ const config = require('../config');
 const { cmd } = require("../command");
 
 
+
 cmd({
   pattern: "screenshot",
   react: "🌐",
@@ -239,25 +240,12 @@ cmd({
     // Generate the screenshot URL using Thum.io API
     const screenshotUrl = `https://image.thum.io/get/fullpage/${url}`;
 
- /*   // Send the screenshot as an image
-    await conn.sendMessage(from, {
-      image: { url: screenshotUrl },
-      caption: `🌐 *Website Screenshot*:\n\n${url}`,
-    }, { quoted: mek });
-
-  } catch (error) {
-    console.error("Error capturing screenshot:", error);
-    reply("❌ Unable to capture the screenshot. Please check the URL and try again.");
-  }
-});
-*/
-
     // Send the screenshot as an image message
     await conn.sendMessage(from, {
       image: { url: screenshotUrl },
       caption: `*Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ*\n\n🌐 *Website URL: ${url}`,
       contextInfo: {
-        mentionedJid: [m.sender],
+        mentionedJid: [msg.sender], // Fix: Use `msg.sender` instead of `m.sender`
         forwardingScore: 999,
         isForwarded: true,
         forwardedNewsletterMessageInfo: {
@@ -270,6 +258,6 @@ cmd({
 
   } catch (error) {
     console.error("Error:", error); // Log the error for debugging
-    reply("Failed to capture the screenshot. Please try again.");
+    reply("❌ Failed to capture the screenshot. Please try again.");
   }
 });
