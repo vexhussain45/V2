@@ -378,8 +378,9 @@ async (conn, mek, m, {
 */
 
 const axios = require("axios");
-const config = require('../config');const { cmd } = require("../command");
-const axios = require("axios");
+const config = require('../config');
+const { cmd } = require("../command");
+
 
 cmd({
   pattern: "screenshot",
