@@ -36,7 +36,14 @@ cmd({
 
     // Save the PDF to a file
     const pdfBytes = await pdfDoc.save();
-    const filePath = path.join(__dirname, "../temp/text.pdf");
+    const tempDir = path.join(__dirname, "../temp");
+
+    // Create the temp directory if it doesn't exist
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+
+    const filePath = path.join(tempDir, "text.pdf");
     fs.writeFileSync(filePath, pdfBytes);
 
     // Send the PDF as a document
