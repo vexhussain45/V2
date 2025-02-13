@@ -1,4 +1,4 @@
-const { cmd } = require("../command");
+/* const { cmd } = require("../command");
 const { PDFDocument, StandardFonts, rgb } = require("pdf-lib");
 const { Readable } = require("stream");
 
@@ -52,3 +52,5 @@ cmd({
     reply("❌ Unable to generate the PDF. Please try again.");
   }
 });
+
+*/
