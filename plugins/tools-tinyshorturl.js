@@ -21,8 +21,9 @@ Support      : wa.me/18062212660
 
 const config = require('../config');
 const { cmd, commands } = require('../command');
-const { fetchJson } = require('../lib/functions');
+const axios = require("axios");
 
+/*
 
 cmd({
   pattern: 'tinyurl',
@@ -74,13 +75,6 @@ cmd({
 
     const caption = ` \`SUBZERO URL SHORTENER\` \n\n\n*Original Link:* ${q}\n\n*Shortened Link:* ${result}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`;
 
-   /* await conn.sendMessage(m.chat, { text: caption }, { quoted: m });
-  } catch (error) {
-    console.error(error);
-    reply(`An error occurred: ${error.message}`);
-  }
-});
-*/
  // Send the status message with an image
         await conn.sendMessage(from, { 
             image: { url: `https://i.ibb.co/DR0k2XM/mrfrankofc.jpg` },  // Image URL
@@ -101,4 +95,36 @@ cmd({
         console.error("Error in shortining URL:", e);
         reply(`An error occurred: ${e.message}`);
     }
+});
+*/
+
+cmd({
+  pattern: "tinyurl",
+  alias: ["shorten", "shorturl"],
+  desc: "Shorten a long URL using TinyURL.",
+  category: "utility",
+  use: ".tinyurl <long_url>",
+  filename: __filename,
+}, async (conn, mek, msg, { from, args, reply }) => {
+  try {
+    const longUrl = args[0];
+    if (!longUrl) {
+      return reply("❌ Please provide a valid URL. Example: `.tinyurl https://example.com/very-long-url`");
+    }
+
+    // Validate the URL
+    if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
+      return reply("❌ Invalid URL. Please include 'http://' or 'https://'.");
+    }
+
+    // Shorten the URL using TinyURL API
+    const response = await axios.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+    const shortUrl = response.data;
+
+    // Send the shortened URL
+    reply(`🔗 *Shortened URL*:\n\n${shortUrl}`);
+  } catch (error) {
+    console.error("Error shortening URL:", error);
+    reply("❌ Unable to shorten the URL. Please check the URL and try again.");
+  }
 });
