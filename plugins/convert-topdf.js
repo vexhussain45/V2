@@ -1,4 +1,4 @@
-const { cmd } = require("../command");
+/* const { cmd } = require("../command");
 const pkg = require('imgur');
 const fs = require('fs');
 const path = require('path');
@@ -66,7 +66,7 @@ async function uploadtoimgur(imagepath) {
   }
 }
 
-
+*/
 /*const { Telegraph } = require('telegraph');
 const fs = require('fs');
 const path = require('path');
