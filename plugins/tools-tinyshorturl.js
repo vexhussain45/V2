@@ -130,9 +130,11 @@ cmd({
 });
 */
 
+const axios = require('axios');
+
 cmd({
   pattern: "tinyurl",
-  alias: ["shorten", "shorturl"],
+  alias: ["shorten", "shorturl", "tiny"],
   desc: "Shorten a long URL using TinyURL with an optional custom alias.",
   category: "utility",
   use: ".tinyurl <long_url>|<alias>",
@@ -165,9 +167,6 @@ cmd({
         if (error.response && error.response.status === 404) {
           // Alias is available, create the custom URL
           shortUrl = `https://tinyurl.com/${alias}`;
-          // You can use a service to create the custom URL here
-          // For now, we'll just return the custom URL
-          return reply(`🔗 *Custom Shortened URL*:\n\n${shortUrl}`);
         } else {
           throw error;
         }
@@ -178,10 +177,27 @@ cmd({
       shortUrl = response.data;
     }
 
-    // Send the shortened URL
-    reply(`🔗 *Shortened URL*:\n\n${shortUrl}`);
+    // Create the caption for the status message
+    const caption = `\`SUBZERO URL SHORTENER\`\n\n\n*Original Link:* ${longUrl}\n\n*Shortened Link:* ${shortUrl}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`;
+
+    // Send the status message with an image
+    await conn.sendMessage(from, {
+      image: { url: `https://i.ibb.co/DR0k2XM/mrfrankofc.jpg` }, // Image URL
+      caption: caption,
+      contextInfo: {
+        mentionedJid: [mek.sender],
+        forwardingScore: 999,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: '120363304325601080@newsletter',
+          newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+          serverMessageId: 143
+        }
+      }
+    }, { quoted: mek });
+
   } catch (error) {
     console.error("Error shortening URL:", error);
-    reply("❌ Unable to shorten the URL. Please check the URL and try again.");
+    reply(`❌ An error occurred: ${error.message}`);
   }
 });
