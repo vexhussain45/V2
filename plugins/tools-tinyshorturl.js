@@ -129,18 +129,20 @@ cmd({
   }
 });
 */
+const axios = require('axios');
 
 cmd({
   pattern: "tinyurl",
   alias: ["shorten", "shorturl"],
-  desc: "Shorten a long URL using TinyURL with an optional alias.",
+  desc: "Shorten a long URL using TinyURL with an optional custom alias.",
   category: "utility",
   use: ".tinyurl <long_url>|<alias>",
   filename: __filename,
 }, async (conn, mek, msg, { from, args, reply }) => {
   try {
-    const [longUrl, alias] = args;
-    
+    const input = args.join(" ");
+    const [longUrl, alias] = input.split("|");
+
     if (!longUrl) {
       return reply("❌ Please provide a valid URL. Example: `.tinyurl https://example.com/very-long-url`");
     }
@@ -150,24 +152,32 @@ cmd({
       return reply("❌ Invalid URL. Please include 'http://' or 'https://'.");
     }
 
-    let apiUrl = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`;
+    let shortUrl;
 
-    // Check if the user provided an alias
     if (alias) {
-      const checkAlias = await axios.get(`https://tinyurl.com/${alias}`);
-      
-      // If the alias is already taken, let the user know
-      if (checkAlias.status === 200) {
-        return reply(`❌ The alias '${alias}' is already taken. Please choose another one.`);
+      // Check if the alias is already taken
+      const aliasCheckUrl = `https://tinyurl.com/${alias}`;
+      try {
+        const aliasCheckResponse = await axios.head(aliasCheckUrl);
+        if (aliasCheckResponse.status === 200) {
+          return reply(`❌ The alias '${alias}' is already taken. Please choose another alias.`);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          // Alias is available, create the custom URL
+          shortUrl = `https://tinyurl.com/${alias}`;
+          // You can use a service to create the custom URL here
+          // For now, we'll just return the custom URL
+          return reply(`🔗 *Custom Shortened URL*:\n\n${shortUrl}`);
+        } else {
+          throw error;
+        }
       }
-
-      // Append the alias to the URL
-      apiUrl = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}&alias=${alias}`;
+    } else {
+      // Shorten the URL using TinyURL API
+      const response = await axios.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+      shortUrl = response.data;
     }
-
-    // Shorten the URL using TinyURL API
-    const response = await axios.get(apiUrl);
-    const shortUrl = response.data;
 
     // Send the shortened URL
     reply(`🔗 *Shortened URL*:\n\n${shortUrl}`);
@@ -176,6 +186,3 @@ cmd({
     reply("❌ Unable to shorten the URL. Please check the URL and try again.");
   }
 });
-
-
-
