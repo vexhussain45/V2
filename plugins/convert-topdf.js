@@ -1,4 +1,4 @@
- const { cmd } = require("../command");
+/* const { cmd } = require("../command");
 const { Telegraph } = require('telegraph');
 const fs = require('fs');
 const path = require('path');
@@ -47,3 +47,4 @@ cmd({
     reply("❌ Failed to upload media. Please try again.");
   }
 });
+*/
