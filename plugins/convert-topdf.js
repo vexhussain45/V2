@@ -3,6 +3,7 @@ const { Telegraph } = require('telegraph');
 const fs = require('fs');
 const path = require('path');
 
+
 cmd({
   pattern: "upload",
   alias: ["share"],
@@ -16,10 +17,13 @@ cmd({
       return reply("❌ Please reply to a video, image, or sticker to upload.");
     }
 
+    // Debug: Log the quoted message to inspect its structure
+    console.log("Quoted Message:", quoted);
+
     // Check if the quoted message contains a video, image, or sticker
     const mediaTypes = ['imageMessage', 'videoMessage', 'stickerMessage'];
     if (!mediaTypes.includes(quoted.mtype)) {
-      return reply("❌ Unsupported media type. Please reply to a video, image, or sticker.");
+      return reply(`❌ Unsupported media type. Detected type: ${quoted.mtype || 'unknown'}`);
     }
 
     // Download the media file
