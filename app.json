@@ -58,7 +58,7 @@
     }, 
 
 
-    "AUTO_STATUS_RWEACT": {
+    "AUTO_STATUS_REACT": {
       "description": "Make it true for automatic status react & seen.",
       "required": true,
       "value": "true"
