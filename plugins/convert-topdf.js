@@ -1,56 +1,45 @@
-/* const { cmd } = require("../command");
-const { PDFDocument, StandardFonts, rgb } = require("pdf-lib");
-const { Readable } = require("stream");
+ const { cmd } = require("../command");
+const { Telegraph } = require('telegraph');
+const fs = require('fs');
+const path = require('path');
 
 cmd({
-  pattern: "texttopdf",
-  alias: ["txt2pdf", "makepdf"],
-  desc: "Convert text into a PDF file.",
+  pattern: "upload",
+  alias: ["share"],
+  desc: "Upload videos, pictures, or stickers and get a shareable URL.",
   category: "utility",
-  use: ".texttopdf <text>",
+  use: ".upload (reply to a video, image, or sticker)",
   filename: __filename,
-}, async (conn, mek, msg, { from, args, reply }) => {
+}, async (conn, mek, msg, { from, reply, quoted }) => {
   try {
-    const text = args.join(" ");
-    if (!text) {
-      return reply("❌ Please provide text to convert into a PDF. Example: `.texttopdf Hello, World!`");
+    if (!quoted) {
+      return reply("❌ Please reply to a video, image, or sticker to upload.");
     }
 
-    // Create a new PDF document
-    const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([600, 400]);
+    // Check if the quoted message contains a video, image, or sticker
+    const mediaTypes = ['imageMessage', 'videoMessage', 'stickerMessage'];
+    if (!mediaTypes.includes(quoted.mtype)) {
+      return reply("❌ Unsupported media type. Please reply to a video, image, or sticker.");
+    }
 
-    // Set font and font size
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontSize = 12;
+    // Download the media file
+    const media = await conn.downloadMediaMessage(quoted);
+    const filePath = path.join(__dirname, `temp_${Date.now()}.${quoted.mtype === 'stickerMessage' ? 'webp' : quoted.mtype === 'imageMessage' ? 'jpg' : 'mp4'}`);
+    fs.writeFileSync(filePath, media);
 
-    // Add text to the PDF
-    page.drawText(text, {
-      x: 50,
-      y: 350,
-      size: fontSize,
-      font: font,
-      color: rgb(0, 0, 0),
-    });
+    // Upload to Telegra.ph
+    const telegraph = new Telegraph();
+    const uploadResponse = await telegraph.uploadFile(filePath);
 
-    // Save the PDF to a buffer
-    const pdfBytes = await pdfDoc.save();
+    // Delete the temporary file
+    fs.unlinkSync(filePath);
 
-    // Convert the buffer to a readable stream
-    const pdfStream = Readable.from(pdfBytes);
-
-    // Send the PDF as a document
-    await conn.sendMessage(from, {
-      document: pdfStream, // Send the PDF as a stream
-      mimetype: "application/pdf",
-      fileName: "text.pdf",
-      caption: "📄 *Text to PDF*\n\nHere's your PDF file!",
-    }, { quoted: mek });
+    // Send the URL
+    const mediaType = quoted.mtype === 'videoMessage' ? 'Video' : quoted.mtype === 'imageMessage' ? 'Image' : 'Sticker';
+    reply(`✅ *${mediaType} Uploaded Successfully!*\n\n🔗 *URL:* ${uploadResponse.url}`);
 
   } catch (error) {
-    console.error("Error generating PDF:", error);
-    reply("❌ Unable to generate the PDF. Please try again.");
+    console.error("Error uploading media:", error);
+    reply("❌ Failed to upload media. Please try again.");
   }
 });
-
-*/
