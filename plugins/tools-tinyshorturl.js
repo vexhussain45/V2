@@ -130,7 +130,6 @@ cmd({
 });
 */
 
-const axios = require('axios');
 
 cmd({
   pattern: "tinyurl",
