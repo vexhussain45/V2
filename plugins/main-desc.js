@@ -1,4 +1,4 @@
-const { cmd } = require("../command");
+/* const { cmd } = require("../command");
 const fs = require('fs');
 const path = require('path');
 
@@ -69,3 +69,4 @@ cmd({
     reply("❌ An error occurred while fetching the plugin list.");
   }
 });
+*/
