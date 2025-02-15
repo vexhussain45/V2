@@ -58,7 +58,7 @@
     "pdf-lib": "^1.17.1",
     "telegraph": "^0.8.22",
     "qrcode-reader": "^1.0.4",
-    "jimp": "^1.6.0",
+    "jimp": "^0.16.13",
     "imgur": "^2.1.0",
     "dotenv": "^16.0.0"
     
