@@ -18,8 +18,12 @@ cmd({
       return reply("❌ Please reply to an image containing a QR code.");
     }
 
+    // Debug: Log the quoted message to inspect its structure
+    console.log("Quoted Message:", quoted);
+
     // Check if the quoted message is an image
-    if (quoted.mtype !== 'imageMessage') {
+    const isImage = quoted.imageMessage || quoted.message?.imageMessage;
+    if (!isImage) {
       return reply("❌ The replied message is not an image. Please reply to an image containing a QR code.");
     }
 
