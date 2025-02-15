@@ -10,7 +10,7 @@ cmd({
     alias: ["currency"],
     desc: "Convert money from one currency to another currency",
     category: "utility",
-    use: ".convert amount fromCurrency toCurrency (e.g: .convert 100 USD EUR)",
+    use: ".currency amount fromCurrency toCurrency (e.g: .convert 100 USD EUR)",
     filename: __filename,
 }, async (conn, mek, msg, { from, reply, args }) => {
     try {
@@ -42,9 +42,9 @@ cmd({
         const formattedAmount = new Intl.NumberFormat().format(amount);
         const formattedResult = new Intl.NumberFormat().format(convertedAmount);
 
-        const message = `💱 *SUBZERO CURRENCY CONVERSION 💵*\n\n` +
+        const message = `🌐 *SUBZERO CURRENCY CONVERSION 💵*\n\n` +
             `*💡 From:* ${formattedAmount} ${fromCurrency}\n` +
-            `*🚀 To:* ${formattedResult} ${toCurrency}\n` +
+            `*🏷️ To:* ${formattedResult} ${toCurrency}\n` +
             `*🚦 Rate:* 1 ${fromCurrency} = ${rates[toCurrency]} ${toCurrency}\n\n` +
             `_⏰ Last Updated: ${response.data.time_last_update_utc}_`;
 
