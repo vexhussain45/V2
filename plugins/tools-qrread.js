@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const Jimp = require('jimp');
 const QrCode = require('qrcode-reader');
+const axios = require('axios'); // Add axios for downloading the image
 
 cmd({
   pattern: "readqr",
@@ -27,10 +28,16 @@ cmd({
       return reply("❌ The replied message is not an image. Please reply to an image containing a QR code.");
     }
 
-    // Download the image
-    const media = await conn.downloadMediaMessage(quoted);
+    // Get the image URL
+    const imageUrl = quoted.imageMessage?.url || quoted.message?.imageMessage?.url;
+    if (!imageUrl) {
+      return reply("❌ Unable to retrieve the image URL.");
+    }
+
+    // Download the image using axios
     const imagePath = path.join(__dirname, `temp_qr_${Date.now()}.jpg`);
-    fs.writeFileSync(imagePath, media);
+    const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+    fs.writeFileSync(imagePath, response.data);
 
     // Read the image using Jimp
     const image = await Jimp.read(fs.readFileSync(imagePath));
