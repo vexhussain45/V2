@@ -6,6 +6,7 @@ const API_KEY = "9c8b8532d40e5da04fac9772";
 
 cmd({
     pattern: "convertmoney",
+    react: "💵",
     alias: ["currency"],
     desc: "Convert money from one currency to another currency",
     category: "utility",
@@ -14,7 +15,7 @@ cmd({
 }, async (conn, mek, msg, { from, reply, args }) => {
     try {
         if (args.length !== 3) {
-            return reply("❌ Invalid format! Use: .convert amount fromCurrency toCurrency\nExample: .convert 100 USD EUR");
+            return reply("❌ Invalid format! Use: .currency amount fromCurrency toCurrency\nExample: .convert 100 USD EUR");
         }
 
         const amount = parseFloat(args[0]);
@@ -41,11 +42,11 @@ cmd({
         const formattedAmount = new Intl.NumberFormat().format(amount);
         const formattedResult = new Intl.NumberFormat().format(convertedAmount);
 
-        const message = `💱 *Currency Conversion*\n\n` +
-            `*From:* ${formattedAmount} ${fromCurrency}\n` +
-            `*To:* ${formattedResult} ${toCurrency}\n` +
-            `*Rate:* 1 ${fromCurrency} = ${rates[toCurrency]} ${toCurrency}\n\n` +
-            `_Last Updated: ${response.data.time_last_update_utc}_`;
+        const message = `💱 *SUBZERO CURRENCY CONVERSION 💵*\n\n` +
+            `*💡 From:* ${formattedAmount} ${fromCurrency}\n` +
+            `*🚀 To:* ${formattedResult} ${toCurrency}\n` +
+            `*🚦 Rate:* 1 ${fromCurrency} = ${rates[toCurrency]} ${toCurrency}\n\n` +
+            `_⏰ Last Updated: ${response.data.time_last_update_utc}_`;
 
         reply(message);
 
