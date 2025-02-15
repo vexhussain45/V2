@@ -57,9 +57,10 @@
     "javascript-obfuscator": "^4.0.0",
     "pdf-lib": "^1.17.1",
     "telegraph": "^0.8.22",
-    "imgur": "^2.1.0",
-    "dotenv": "^16.0.0",
     "qrcode-reader": "^1.0.4",
-    "jimp": "^0.22.7"
+    "jimp": "^0.22.7",
+    "imgur": "^2.1.0",
+    "dotenv": "^16.0.0"
+    
   }
 }
