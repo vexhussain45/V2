@@ -3,7 +3,7 @@ const axios = require('axios');
 const { cmd } = require('../command');
 
 cmd({
-  pattern: "lyrics",
+  pattern: "lyrics2",
   react: "🎵",
   alias: ["songlyrics", "findlyrics"],
   desc: "Search for song lyrics.",
