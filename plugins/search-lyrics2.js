@@ -1,4 +1,60 @@
-const axios = require('axios');
+const { cmd } = require('../command');
+const songlyrics = require('songlyrics');
+
+cmd({
+  pattern: "lyrics2",
+  alias: ["songlyrics", "findlyrics"],
+  desc: "Search for song lyrics using a song title or lyrics snippet.",
+  category: "music",
+  use: ".lyrics2 <song title or lyrics query>",
+  filename: __filename,
+}, async (conn, mek, msg, { from, reply, args }) => {
+  try {
+    const query = args.join(" ").trim(); // Combine arguments into a single query
+
+    if (!query) {
+      return reply("❌ Please provide a song title or lyrics snippet. Example: `.lyrics2 faded alan walker`");
+    }
+
+    let songTitle = query;
+    let artist = "";
+
+    // Detect format and extract song title and artist
+    const byMatch = query.match(/(.+?)\s+by\s+(.+)/i); // Match format: "title by artist"
+    if (byMatch) {
+      songTitle = byMatch[1].trim();
+      artist = byMatch[2].trim();
+    } else {
+      // Try to detect if the last word is likely the artist (assumes artist names have at least 2 words)
+      const words = query.split(" ");
+      if (words.length > 2) {
+        songTitle = words.slice(0, -2).join(" ").trim(); // Everything except last two words
+        artist = words.slice(-2).join(" ").trim(); // Last two words as potential artist
+      }
+    }
+
+    // Search for lyrics using title and artist if available
+    const lyricsData = artist ? await songlyrics(songTitle, artist) : await songlyrics(songTitle);
+
+    if (!lyricsData || !lyricsData.lyrics) {
+      return reply(`❌ No lyrics found for "${query}".`);
+    }
+
+    // Format the output
+    const formattedLyrics = `🎵 *Title:* ${lyricsData.title}\n👤 *Artist:* ${lyricsData.artist}\n\n📜 *Lyrics:*\n\n${lyricsData.lyrics}`;
+
+    // Send the lyrics
+    reply(formattedLyrics);
+
+  } catch (error) {
+    console.error("Error searching for lyrics:", error);
+    reply("❌ An error occurred while searching for lyrics. Please try again.");
+  }
+});
+
+
+
+/* const axios = require('axios');
 const { cmd } = require('../command');
 
 cmd({
@@ -52,3 +108,4 @@ cmd({
     }
   }
 });
+*/
