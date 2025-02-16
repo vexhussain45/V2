@@ -61,6 +61,7 @@
     "jimp": "^0.16.13",
     "imgur": "^2.1.0",
     "lyrics-finder": "^1.0.5",
+    "songlyrics": "^2.4.8",
     "dotenv": "^16.0.0"
     
   }
