@@ -3,7 +3,7 @@ const axios = require('axios');
 const { cmd } = require('../command');
 
 cmd({
-  pattern: "lyrics2",
+  pattern: "lyrics",
   react: "🎵",
   alias: ["songlyrics", "findlyrics"],
   desc: "Search for song lyrics.",
@@ -39,7 +39,7 @@ cmd({
     const imageBuffer = Buffer.from(imageResponse.data, 'binary');
 
     // Prepare the caption with song details and lyrics
-    const caption = `\`SUBZERO BOT\`\n\n🎵 *${title}*\n🎤 *${artist}*\n\n📜 *Lyrics:*\n\n${lyrics}`;
+    const caption = `   \`SUBZERO BOT\`\n\n*🎵 ᴛɪᴛʟᴇ ${title}*\n*🎤ᴀʀᴛɪsᴛ ${artist}*\n\n📜 *Lyrics:*\n\n${lyrics}\n\n> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ sᴜʙᴢᴇʀᴏ`;
 
     // Send the image and caption as a message
     await conn.sendMessage(
