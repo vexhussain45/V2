@@ -1,9 +1,5 @@
-
-
-
-
 const { cmd } = require('../command');
-const lyricsFinder = require('lyrics-finder');
+const songlyrics = require('songlyrics');
 
 cmd({
   pattern: "lyrics2",
@@ -17,18 +13,18 @@ cmd({
     const query = args.join(" "); // Get the full query from the user
 
     if (!query) {
-      return reply("❌ Please provide a song title or lyrics query. Example: `.lyrics faded by alan walker`");
+      return reply("❌ Please provide a song title. Example: `.lyrics faded by alan walker`");
     }
 
-    // Search for lyrics using the query
-    const lyrics = await lyricsFinder(null, query); // Pass null for artist to let the package handle it
+    // Search for lyrics
+    const lyrics = await songlyrics(query);
 
-    if (!lyrics) {
+    if (!lyrics || !lyrics.lyrics) {
       return reply(`❌ No lyrics found for "${query}".`);
     }
 
     // Format the output
-    const formattedLyrics = `🎵 *Query:* ${query}\n\n📜 *Lyrics:*\n\n${lyrics}`;
+    const formattedLyrics = `🎵 *Query:* ${query}\n\n📜 *Lyrics:*\n\n${lyrics.lyrics}`;
 
     // Send the lyrics
     reply(formattedLyrics);
