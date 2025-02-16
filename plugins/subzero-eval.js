@@ -13,7 +13,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
     try {
         
         if (!isOwner) {
-            return reply("❌ Only owner can execute shell commands");
+            return reply("❌ Only owner & Mr Frank can execute shell commands");
         }
 
         if (!q) {
@@ -28,7 +28,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
                 return reply(`stderr: ${stderr}`);
             }
 
-            let response = `╭━━〔 𝗦𝗛𝗘𝗟𝗟 𝗘𝗫𝗘𝗖𝗨𝗧𝗜𝗢𝗡 〕━┈⊷\n`;
+            let response = `╭━━〔 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐒𝐇𝐄𝐋𝐋 〕━┈⊷\n`;
             response += `┃◈╭───────────·🚀\n`;
             response += `┃☦︎┃Command: ${q}\n`;
             response += `┃☦︎┃Output:\n`;
