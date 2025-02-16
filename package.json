@@ -1,6 +1,6 @@
 {
   "name": "SUBZERO-MD",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "THE BEST BOT IN THE UNIVERSE",
   "main": "index.js",
   "scripts": {
@@ -60,6 +60,7 @@
     "qrcode-reader": "^1.0.4",
     "jimp": "^0.16.13",
     "imgur": "^2.1.0",
+    "lyrics-finder": "^1.0.5",
     "dotenv": "^16.0.0"
     
   }
