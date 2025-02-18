@@ -1,3 +1,6 @@
+// Console.log("Mr Frank Is the best");
+
+
 /* const axios = require('axios');
 const { cmd } = require('../command');
 
@@ -67,7 +70,7 @@ cmd({
   filename: __filename,
 }, async (conn, mek, msg, { from, reply }) => {
   try {
-    const response = await axios.get('https://toxxic-api.onrender.com/api/tempnum');
+    const response = await axios.get('https://toxxic-api.onrender.com/api/tempnum'); // Wasted MotherFucker
     const data = response.data;
 
     if (!data.success) {
@@ -81,14 +84,14 @@ cmd({
 
       if (item.messages.length > 0) {
         responseText += '💬 *Messages:* \n';
-        item.messages.forEach((message, msgIndex) => {
-          responseText += `  ➡️ *From:* ${message.sender} \n⏰ *Time:* ${message.time} \n📄 *Message:* ${message.message}\n\n`;
+        item.messages.forEach((message, msgIndex) => { 
+          responseText += `  ➡️ *From:* ${message.sender} \n⏰ *Time: * ${message.time} \n📄 *Message:* ${message.message}\n\n`;
         });
       } else {
         responseText += '❗ *No messages yet.*\n\n';
       }
 
-      responseText += '---------------------------------\n';
+      responseText += '⟣---------------------------------⟢\n';
     });
 
     await reply(responseText);
