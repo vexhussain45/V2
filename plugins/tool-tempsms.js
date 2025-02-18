@@ -74,15 +74,21 @@ cmd({
       return reply('❌ Failed to fetch temporary numbers. Please try again later.');
     }
 
-    let responseText = '📱 Temporary Numbers:\n\n';
-    data.data.forEach((item, index) => {
-      responseText += `*${index + 1}.* Phone: ${item.phoneNumber}\nCountry: ${item.country}\nMessages:\n`;
-      
-      item.messages.forEach(message => {
-        responseText += `  - ${message.time} | From: ${message.sender} | Message: ${message.message}\n`;
-      });
+    let responseText = '📱 *Temporary Numbers & Messages:*\n\n';
 
-      responseText += '\n';
+    data.data.forEach((item, index) => {
+      responseText += `🔢 *${index + 1}. Phone Number:* ${item.phoneNumber} \n🌍 *Country:* ${item.country}\n\n`;
+
+      if (item.messages.length > 0) {
+        responseText += '💬 *Messages:* \n';
+        item.messages.forEach((message, msgIndex) => {
+          responseText += `  ➡️ *From:* ${message.sender} \n⏰ *Time:* ${message.time} \n📄 *Message:* ${message.message}\n\n`;
+        });
+      } else {
+        responseText += '❗ *No messages yet.*\n\n';
+      }
+
+      responseText += '---------------------------------\n';
     });
 
     await reply(responseText);
@@ -91,4 +97,3 @@ cmd({
     reply('❌ Failed to fetch data. Please try again later.');
   }
 });
-
