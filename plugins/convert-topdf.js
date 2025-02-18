@@ -1,4 +1,8 @@
- const { cmd } = require('../command');
+// MADE BY MR FRANK 🇿🇼
+// ULTIMATE SUBZERO BOT
+// COPY IT I KNOW YOU A NOOB !
+
+const { cmd } = require('../command');
 const PDFDocument = require('pdfkit');
 const { Buffer } = require('buffer');
 
