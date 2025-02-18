@@ -86,7 +86,7 @@ cmd({
       if (item.messages.length > 0) {
         responseText += '💬 *Messages:* \n';
         item.messages.forEach((message, msgIndex) => { 
-          responseText += `  ➡️ *From:* ${message.sender} \n⏰ *Time: * ${message.time} \n📄 *Message:* ${message.message}\n\n`;
+          responseText += `  ➡️ *From:* ${message.sender} \n⏰ *Time:*: ${message.time} \n📄 *Message:* ${message.message}\n\n`;
         });
       } else {
         responseText += '❗ *No messages yet.*\n\n';
