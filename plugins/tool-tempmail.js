@@ -1,3 +1,7 @@
+const config = require('../config');
+const { cmd, commands } = require('../command');
+
+
 const axios = require("axios");
 const BASE_URL = "https://www.1secmail.com/api/v1/";
 
