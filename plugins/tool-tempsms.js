@@ -63,7 +63,8 @@ const { cmd } = require('../command');
 
 cmd({
   pattern: 'tempnum',
-  alias: ['number'],
+  react: '🧩',
+  alias: ['number','virtualsim','tempnumber','temporarynumber'],
   desc: 'Fetches temporary phone numbers and their SMS messages.',
   category: 'utility',
   use: '.tempnum',
@@ -77,7 +78,7 @@ cmd({
       return reply('❌ Failed to fetch temporary numbers. Please try again later.');
     }
 
-    let responseText = '📱 *Temporary Numbers & Messages:*\n\n';
+    let responseText = '📱 *Subzero Temporary Numbers & Messages:*\n\n';
 
     data.data.forEach((item, index) => {
       responseText += `🔢 *${index + 1}. Phone Number:* ${item.phoneNumber} \n🌍 *Country:* ${item.country}\n\n`;
