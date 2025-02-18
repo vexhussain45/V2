@@ -64,7 +64,7 @@ const { cmd } = require('../command');
 cmd({
   pattern: 'tempnum',
   react: '🔄',
-  alias: ['number','virtualsim','tempnumber','temporarynumber'],
+  alias: ['number', 'virtualsim','esim', 'tempnumber', 'temporarynumber'],
   desc: 'Fetches temporary phone numbers and their SMS messages.',
   category: 'utility',
   use: '.tempnum',
@@ -95,9 +95,24 @@ cmd({
       responseText += '⟣---------------------------------⟢\n';
     });
 
-    await reply(responseText);
+    // Send the status message with the image and forwarded info
+    await conn.sendMessage(from, {
+      image: { url: `https://i.ibb.co/GQBSxzNy/mrfrankofc.jpg` }, // Image URL
+      caption: responseText, // The formatted message
+      contextInfo: {
+        mentionedJid: [msg.sender],
+        forwardingScore: 999,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: '120363304325601080@newsletter',
+          newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+          serverMessageId: 143
+        }
+      }
+    }, { quoted: mek });
+
   } catch (error) {
-    console.error('Error fetching temp numbers:', error);
-    reply('❌ Failed to fetch data. Please try again later.');
+    console.error("Error:", error); // Log the error
+    reply("*Error: Unable to fetch data. Please try again later.*");
   }
 });
