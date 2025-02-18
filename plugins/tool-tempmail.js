@@ -1,4 +1,4 @@
-const config = require('../config');
+/* const config = require('../config');
 const { cmd, commands } = require('../command');
 
 
@@ -82,5 +82,78 @@ cmd({
   } catch (error) {
     console.error("Error with temp mail plugin:", error);
     reply("❌ Failed to process request. Try again later.");
+  }
+});
+*/
+
+const axios = require('axios');
+const { cmd } = require('../command');
+
+const BASE_URL = 'https://www.guerrillamail.com/ajax.php';
+let userSessions = {}; // Store session data per user
+
+cmd({
+  pattern: 'tempmail',
+  alias: ['tm', 'mailtemp'],
+  desc: 'Generate and fetch temporary emails.',
+  category: 'utility',
+  use: '.tempmail [new | inbox | read <ID>]',
+  filename: __filename,
+}, async (conn, mek, msg, { from, args, reply }) => {
+  try {
+    const action = args[0] ? args[0].toLowerCase() : 'new';
+
+    if (action === 'new') {
+      // Generate a new temporary email
+      const response = await axios.get(`${BASE_URL}?f=get_email_address`, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+      });
+      const { email_addr, sid_token } = response.data;
+      userSessions[from] = { email: email_addr, sid_token };
+      return reply(`📩 *Your Temporary Email:* ${email_addr}\n\nUse .tempmail inbox to check received emails.`);
+    }
+
+    if (!userSessions[from]) {
+      return reply('❌ You don\'t have an active temp email. Use `.tempmail new` to generate one.');
+    }
+
+    const { email, sid_token } = userSessions[from];
+
+    if (action === 'inbox') {
+      // Check the inbox for the current temporary email
+      const response = await axios.get(`${BASE_URL}?f=get_email_list&sid_token=${sid_token}&offset=0`, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+      });
+      const emails = response.data.list;
+      if (!emails || emails.length === 0) {
+        return reply('📭 No new emails in your temporary inbox.');
+      }
+      let messageList = '📨 *Inbox Messages:*\n\n';
+      emails.forEach(mail => {
+        messageList += `🆔 ID: ${mail.mail_id}\n📧 From: ${mail.mail_from}\n📌 Subject: ${mail.mail_subject}\n\n`;
+      });
+      return reply(messageList + 'Use `.tempmail read <ID>` to read an email.');
+    }
+
+    if (action === 'read') {
+      const emailId = args[1];
+      if (!emailId) {
+        return reply('❌ Provide an email ID. Example: `.tempmail read 12345`');
+      }
+      // Read a specific email by ID
+      const response = await axios.get(`${BASE_URL}?f=fetch_email&sid_token=${sid_token}&email_id=${emailId}`, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+      });
+      const mail = response.data;
+      if (!mail || !mail.mail_subject) {
+        return reply('❌ Invalid email ID or email no longer exists.');
+      }
+      return reply(`📧 *Email from:* ${mail.mail_from}\n📌 *Subject:* ${mail.mail_subject}\n📩 *Message:* ${mail.mail_body}`);
+    }
+
+    return reply('❌ Invalid option. Use `.tempmail new`, `.tempmail inbox`, or `.tempmail read <ID>`');
+  } catch (error) {
+    console.error('Error with temp mail plugin:', error);
+    reply('❌ Failed to process request. Try again later.');
   }
 });
