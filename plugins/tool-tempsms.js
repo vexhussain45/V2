@@ -1,4 +1,4 @@
-const axios = require('axios');
+/* const axios = require('axios');
 const { cmd } = require('../command');
 
 let userSessions = {}; // Store session data per user
@@ -54,3 +54,41 @@ cmd({
     reply('❌ Failed to process request. Try again later.');
   }
 });
+*/
+const axios = require('axios');
+const { cmd } = require('../command');
+
+cmd({
+  pattern: 'tempnum',
+  alias: ['number'],
+  desc: 'Fetches temporary phone numbers and their SMS messages.',
+  category: 'utility',
+  use: '.tempnum',
+  filename: __filename,
+}, async (conn, mek, msg, { from, reply }) => {
+  try {
+    const response = await axios.get('https://toxxic-api.onrender.com/api/tempnum');
+    const data = response.data;
+
+    if (!data.success) {
+      return reply('❌ Failed to fetch temporary numbers. Please try again later.');
+    }
+
+    let responseText = '📱 Temporary Numbers:\n\n';
+    data.data.forEach((item, index) => {
+      responseText += `*${index + 1}.* Phone: ${item.phoneNumber}\nCountry: ${item.country}\nMessages:\n`;
+      
+      item.messages.forEach(message => {
+        responseText += `  - ${message.time} | From: ${message.sender} | Message: ${message.message}\n`;
+      });
+
+      responseText += '\n';
+    });
+
+    await reply(responseText);
+  } catch (error) {
+    console.error('Error fetching temp numbers:', error);
+    reply('❌ Failed to fetch data. Please try again later.');
+  }
+});
+
