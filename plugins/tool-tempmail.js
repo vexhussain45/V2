@@ -1,3 +1,6 @@
+// Bro rest please next thing is my chanel
+
+
 /* const config = require('../config');
 const { cmd, commands } = require('../command');
 
