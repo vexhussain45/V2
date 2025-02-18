@@ -190,7 +190,7 @@ cmd({
       const responseText = `📩 *Your Temporary Email:* ${email_addr}\n\nUse .tempmail inbox to check received emails.`;
       // Send the status message with image and forwarded context
       await conn.sendMessage(from, {
-        image: { url: `https://i.ibb.co/7dMwhmHm/mrfrankofc.jpg` }, // Image URL
+        image: { url: `https://i.ibb.co/qY3GKMj4/mrfrankofc.jpg` }, // Image URL
         caption: responseText, // The formatted message
         contextInfo: {
           mentionedJid: [msg.sender],
@@ -229,7 +229,7 @@ cmd({
 
       // Send the status message for inbox
       await conn.sendMessage(from, {
-        image: { url: `https://i.ibb.co/7dMwhmHm/mrfrankofc.jpg` }, // Image URL
+        image: { url: `https://i.ibb.co/qY3GKMj4/mrfrankofc.jpg` }, // Image URL
         caption: messageList + 'Use `.tempmail read <ID>` to read an email.',
         contextInfo: {
           mentionedJid: [msg.sender],
@@ -265,7 +265,7 @@ cmd({
 
       // Send the status message for reading an email
       await conn.sendMessage(from, {
-        image: { url: `https://i.ibb.co/7dMwhmHm/mrfrankofc.jpg` }, // Image URL
+        image: { url: `https://i.ibb.co/qY3GKMj4/mrfrankofc.jpg` }, // Image URL
         caption: mailText,
         contextInfo: {
           mentionedJid: [msg.sender],
