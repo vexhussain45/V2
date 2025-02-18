@@ -29,11 +29,11 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
             await conn.sendMessage(from, {
                 document: pdfData,
                 mimetype: 'application/pdf',
-                fileName: 'PDF BY SUBZERO.pdf',
+                fileName: 'SUBZERO_BOT.pdf',
                 caption: `
-*📄 Your PDF has been created! 🚀*
+*📄 PDF created successully!*
 
-> ᴍᴀᴅᴇ ʙʏ ᴍʀ ғʀᴀɴᴋ`
+> ᴍᴀᴅᴇ ʙʏ ᴍʀ ғʀᴀɴᴋ 🚀`
             }, { quoted: mek });
         });
 
