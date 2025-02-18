@@ -1,4 +1,4 @@
-/* const { cmd } = require('../command');
+ const { cmd } = require('../command');
 const PDFDocument = require('pdfkit');
 const { Buffer } = require('buffer');
 
@@ -45,4 +45,3 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         reply(`Error: ${e.message}`);
     }
 });
-*/
