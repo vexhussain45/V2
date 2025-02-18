@@ -63,7 +63,7 @@ const { cmd } = require('../command');
 
 cmd({
   pattern: 'tempnum',
-  react: '🧩',
+  react: '🔄',
   alias: ['number','virtualsim','tempnumber','temporarynumber'],
   desc: 'Fetches temporary phone numbers and their SMS messages.',
   category: 'utility',
