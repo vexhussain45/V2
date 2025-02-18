@@ -3,7 +3,6 @@ const { cmd } = require('../command');
 
 cmd({
   pattern: 'quiz',
-  react: '🧠',
   alias: ['q'],
   desc: 'Fetches a quiz question from an API and presents it to the user.',
   category: 'utility',
@@ -19,17 +18,17 @@ cmd({
       return reply('❌ Failed to fetch a quiz question. Please try again later.');
     }
 
-    const { question, correct_answer, incorrect_answers } = questionData;
-    const options = [...incorrect_answers, correct_answer];
+    const { question, correctAnswer, incorrectAnswers } = questionData;
+    const options = [...incorrectAnswers, correctAnswer];
     shuffleArray(options);
 
     // Send the question and options to the user
     const optionsText = options.map((option, index) => `${String.fromCharCode(65 + index)}. ${option}`).join('\n');
-    await reply(`🎯 *Question:* ${question}\n\n${optionsText}\n\nYou have 10 seconds to answer. Reply with the letter corresponding to your choice.`);
+    await reply(`🎯 *Question:* ${question.text}\n\n${optionsText}\n\nYou have 10 seconds to answer. Reply with the letter corresponding to your choice.`);
 
     // Set a timeout to handle the 10-second response window
     const timeout = setTimeout(() => {
-      reply(`⏰ Time's up! The correct answer was: ${correct_answer}`);
+      reply(`⏰ Time's up! The correct answer was: ${correctAnswer}`);
     }, 10000);
 
     // Listen for the user's response
@@ -39,16 +38,16 @@ cmd({
     clearTimeout(timeout);
 
     if (collected.size === 0) {
-      return reply(`⏰ Time's up! The correct answer was: ${correct_answer}`);
+      return reply(`⏰ Time's up! The correct answer was: ${correctAnswer}`);
     }
 
     const userAnswer = collected.first().text.toUpperCase();
-    const isCorrect = options[userAnswer.charCodeAt(0) - 65] === correct_answer;
+    const isCorrect = options[userAnswer.charCodeAt(0) - 65] === correctAnswer;
 
     if (isCorrect) {
       return reply('✅ Correct!');
     } else {
-      return reply(`❌ Incorrect. The correct answer was: ${correct_answer}`);
+      return reply(`❌ Incorrect. The correct answer was: ${correctAnswer}`);
     }
   } catch (error) {
     console.error('Error fetching quiz data:', error);
