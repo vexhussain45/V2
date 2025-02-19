@@ -22,7 +22,7 @@ cmd({
       return reply('❌ Failed to fetch temporary numbers. Please try again later.');
     }
 
-    let responseText = '📱 *Subzero Temporary Numbers & Messages:*\n\n';
+    let responseText = '📱 \`SUBZERO TEMPORARY NUMBERS\` \n\n';
 
     data.data.forEach((item, index) => {
       responseText += `🔢 *${index + 1}. Phone Number:* ${item.phoneNumber} \n🌍 *Country:* ${item.country}\n\n`;
@@ -30,7 +30,7 @@ cmd({
       if (item.messages.length > 0) {
         responseText += '💬 *Messages:* \n';
         item.messages.forEach((message, msgIndex) => { 
-          responseText += `  ➡️ *From:* ${message.sender} \n⏰ *Time:*: ${message.time} \n📄 *Message:* ${message.message}\n\n`;
+          responseText += `  ➡️ *From:* ${message.sender}\n⏰ *Time:*: ${message.time}\n📄 *Message:* ${message.message}\n\n`;
         });
       } else {
         responseText += '❗ *No messages yet.*\n\n';
@@ -68,7 +68,7 @@ cmd({
 cmd({
   pattern: 'tempnumberlist',
   react: '📃',
-  alias: ['tnlist', 'esimlist'],
+  alias: ['tnlist', 'esimlist','tempnumbersms'],
   desc: 'Generate and fetch temporary virtual numbers.',
   category: 'utility',
   use: '.tempnumber list | .viewsms <number>',
@@ -88,14 +88,14 @@ cmd({
 
       // List all available numbers
       const availableNumbers = numbers.map((item, index) => `${index + 1}. ${item.phoneNumber} (${item.country})`).join('\n');
-      return reply(`📜 *Available Numbers:*\n\n${availableNumbers}\n\nUse \`.tempnumber\` to view received messages.`);
+      return reply(`📜 \`SUBZERO VIRTUAL NUMBERS\` \n\n${availableNumbers}\n\nUse \`.tempnumber\` to view received messages.`);
     }
 
     if (action === 'viewsms') {
       const number = args[1];
 
       if (!number) {
-        return reply('❌ Please provide a number to view messages. Usage: .viewsms <number>');
+        return reply('❌ Please redo again !');
       }
 
       // Fetch SMS for the given number
