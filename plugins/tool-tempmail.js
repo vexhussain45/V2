@@ -9,6 +9,7 @@ let userSessions = {}; // Store session data per user
 
 cmd({
   pattern: 'tempmail',
+  react: '📧',
   alias: ['tm', 'mailtemp'],
   desc: 'Generate and fetch temporary emails.',
   category: 'utility',
