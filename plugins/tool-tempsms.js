@@ -6,9 +6,9 @@ const axios = require('axios');
 const { cmd } = require('../command');
 
 cmd({
-  pattern: 'tempnum',
+  pattern: 'tempnumbersms',
   react: '🔄',
-  alias: ['number', 'virtualsim','esim', 'tempnumber', 'temporarynumber'],
+  alias: ['numbersms', 'virtualsimsms','esimsms', 'tempnumbersms', 'temporarynumber'],
   desc: 'Fetches temporary phone numbers and their SMS messages.',
   category: 'utility',
   use: '.tempnum',
@@ -68,7 +68,7 @@ cmd({
 cmd({
   pattern: 'tempnumberlist',
   react: '📃',
-  alias: ['tnlist', 'esimlist','tempnumbersms'],
+  alias: ['tnlist', 'esimlist','tempnumber'],
   desc: 'Generate and fetch temporary virtual numbers.',
   category: 'utility',
   use: '.tempnumber list | .viewsms <number>',
@@ -88,7 +88,7 @@ cmd({
 
       // List all available numbers
       const availableNumbers = numbers.map((item, index) => `${index + 1}. ${item.phoneNumber} (${item.country})`).join('\n');
-      return reply(`📜 \`SUBZERO VIRTUAL NUMBERS\` \n\n${availableNumbers}\n\nUse \`.tempnumber\` to view received messages.`);
+      return reply(`📜 \`SUBZERO VIRTUAL NUMBERS\` \n\n${availableNumbers}\n\nUse \`.tempnumbersms\` to view received messages.`);
     }
 
     if (action === 'viewsms') {
