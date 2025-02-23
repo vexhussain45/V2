@@ -56,14 +56,14 @@
 
 
 
-
+const config = require('../config');
 const { cmd } = require("../command");
 const axios = require("axios");
 const fs = require("fs");
 
 cmd({
   pattern: "imagine",
-  alias: ["bingimg", "metaimg"],
+  alias: ["flux3", "metaimg"],
   react: "✨",
   desc: "Generate an image using AI.",
   category: "main",
@@ -160,5 +160,44 @@ cmd({
   } catch (error) {
     console.error("FluxAI Error:", error);
     reply(`An error occurred: ${error.response?.data?.message || error.message || "Unknown error"}`);
+  }
+});
+
+
+cmd({
+  pattern: "bingimg",
+  alias: ["bimg", "bingimage"],
+  desc: "Search for images using Bing and send 5 results.",
+  category: "utility",
+  use: ".bingimg <query>",
+  filename: __filename,
+}, async (conn, mek, msg, { from, args, reply }) => {
+  try {
+    const query = args.join(" ");
+    if (!query) {
+      return reply("❌ Please provide a search query. Example: `.bingimg dog`");
+    }
+
+    // Fetch images from the Bing Image Search API
+    const response = await axios.get(`https://api.siputzx.my.id/api/s/bimg?query=${encodeURIComponent(query)}`);
+    const { status, data } = response.data;
+
+    if (!status || !data || data.length === 0) {
+      return reply("❌ No images found for the specified query. Please try again.");
+    }
+
+    // Select the first 5 images
+    const images = data.slice(0, 5);
+
+    // Send each image as an attachment
+    for (const imageUrl of images) {
+      await conn.sendMessage(from, {
+        image: { url: imageUrl }, // Attach the image
+        caption: `🔍 *Bing Image Search*: ${query}`,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching images:", error);
+    reply("❌ Unable to fetch images. Please try again later.");
   }
 });
