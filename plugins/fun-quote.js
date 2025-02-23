@@ -12,7 +12,7 @@ cmd({
 }, async (conn, mek, msg, { from, args, reply, react }) => {
   try {
     // Add a reaction to indicate the bot is processing the request
-    await react("⏳"); // Hourglass emoji for processing
+   // await react("⏳"); // Hourglass emoji for processing
 
     // Fetch a random quote from the Forismatic API
     const response = await axios.get("http://api.forismatic.com/api/1.0/", {
@@ -39,12 +39,12 @@ cmd({
     await reply(quoteMessage);
 
     // Add a success reaction
-    await react("✅"); // Checkmark emoji for success
+  //  await react("✅"); // Checkmark emoji for success
   } catch (error) {
     console.error("Error fetching quote:", error);
 
     // Add an error reaction
-    await react("❌"); // Cross mark emoji for failure
+  //  await react("❌"); // Cross mark emoji for failure
 
     // Send an error message
     reply("❌ Unable to fetch a quote. Please try again later.");
