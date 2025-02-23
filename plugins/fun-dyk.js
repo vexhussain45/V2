@@ -4,6 +4,7 @@ const axios = require("axios");
 
 cmd({
   pattern: "didyouknow",
+  react: "❓",
   alias: ["dyk", "fact", "randomfact"],
   desc: "Get a random fun fact.",
   category: "utility",
@@ -12,7 +13,7 @@ cmd({
 }, async (conn, mek, msg, { from, args, reply, react }) => {
   try {
     // Add a reaction to indicate the bot is processing the request
-    await react("⏳"); // Hourglass emoji for processing
+  //  await react("⏳"); // Hourglass emoji for processing
 
     // Fetch a random fact from the API
     const response = await axios.get("https://uselessfacts.jsph.pl/random.json?language=en");
@@ -26,19 +27,19 @@ cmd({
 ${text}
 
 ─────────────────
-© 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞𝐝 𝐁𝐲 𝐒𝐮𝐛𝐳𝐞𝐫𝐨
+> © Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ
     `;
 
     // Send the formatted message
     await reply(factMessage);
 
     // Add a success reaction
-    await react("✅"); // Checkmark emoji for success
+  //  await react("✅"); // Checkmark emoji for success
   } catch (error) {
     console.error("Error fetching fact:", error);
 
     // Add an error reaction
-    await react("❌"); // Cross mark emoji for failure
+ //   await react("❌"); // Cross mark emoji for failure
 
     // Send an error message
     reply("❌ Unable to fetch a fact. Please try again later.");
