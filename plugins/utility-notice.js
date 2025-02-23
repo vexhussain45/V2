@@ -82,7 +82,7 @@ cmd({
 // View Noticeboard with Status Message Attachment
 cmd({
   pattern: "noticeboard",
-  alias: "updates",
+  alias: ["updates","changelog"],
   desc: "View the noticeboard with all updates.",
   category: "utility",
   use: ".noticeboard",
@@ -97,7 +97,7 @@ cmd({
     }
 
     // Format the notices into a message
-    let noticeMessage = "*┅〔 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐔𝐏𝐃𝐀𝐓𝐄𝐒 〕┅*\n\n";
+    let noticeMessage = "⟣┄┅┅〔 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐔𝐏𝐃𝐀𝐓𝐄𝐒 〕┅┈⟢\n\n";
     notices.forEach((notice, index) => {
       noticeMessage += `${index + 1}. ${notice.message}\n`;
     });
