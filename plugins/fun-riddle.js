@@ -13,7 +13,7 @@ cmd({
 }, async (conn, mek, msg, { from, args, reply, react }) => {
   try {
     // Add a reaction to indicate the bot is processing the request
-    await react("⏳"); // Hourglass emoji for processing
+  //  await react("⏳"); // Hourglass emoji for processing
 
     // Fetch a random riddle from the API
     const response = await axios.get("https://api.riddles.io/riddle/random");
@@ -38,7 +38,7 @@ cmd({
     await reply(riddleMessage);
 
     // Add a success reaction
-    await react("✅"); // Checkmark emoji for success
+  //  await react("✅"); // Checkmark emoji for success
 
     // Wait for 15 seconds before revealing the answer
     setTimeout(async () => {
@@ -53,7 +53,7 @@ cmd({
     console.error("Error fetching riddle:", error);
 
     // Add an error reaction
-    await react("❌"); // Cross mark emoji for failure
+    // await react("❌"); // Cross mark emoji for failure
 
     // Send an error message
     reply("❌ Unable to fetch a riddle. Please try again later.");
