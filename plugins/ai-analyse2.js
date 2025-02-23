@@ -3,8 +3,8 @@ const { cmd, commands } = require('../command');
 const axios = require('axios');
 
 cmd({
-  pattern: 'analyse2',
-  alias: ['vision2'],
+  pattern: 'analyse',
+  alias: ['vision'],
   react: '💡',
   desc: 'Analyze image with instruction.',
   category: 'tools',
@@ -56,7 +56,7 @@ cmd({
 
     // Extract the generated caption
     const caption = response.data[0]?.generated_text || 'No description available.';
-    await reply(`📷 *Image Analysis Result*:\n\n${caption}`);
+    await reply(`🧠 *Image Analysis Result*:\n\n${caption}\n\n> Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ 🚀`);
   } catch (error) {
     const errorMessage = error.message || 'An unknown error occurred.';
     const maxErrorLength = 200;
