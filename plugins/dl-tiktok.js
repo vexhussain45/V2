@@ -290,3 +290,42 @@ cmd({
     reply("❌ Unable to fetch TikTok user information. Please try again later.");
   }
 });
+
+   //&&&&&&&&;
+
+
+cmd({
+  pattern: "tiktokdl",
+  alias: ["ttdl", "tiktokdownload"],
+  desc: "Download a TikTok video by providing the video URL.",
+  category: "utility",
+  use: ".tiktokdl <tiktok_url>",
+  filename: __filename,
+}, async (conn, mek, msg, { from, args, reply }) => {
+  try {
+    const tiktokUrl = args.join(" ");
+    if (!tiktokUrl) {
+      return reply("❌ Please provide a TikTok video URL. Example: `.tiktokdl https://vt.tiktok.com/ZSjXNEnbC`");
+    }
+
+    // Fetch TikTok video download links from the API
+    const response = await axios.get(`https://api.siputzx.my.id/api/tiktok?url=${encodeURIComponent(tiktokUrl)}`);
+    const { status, data } = response.data;
+
+    if (!status || !data || !data.urls || data.urls.length === 0) {
+      return reply("❌ Unable to fetch the TikTok video. Please check the URL and try again.");
+    }
+
+    // Get the first video URL (usually the highest quality)
+    const videoUrl = data.urls[0];
+
+    // Send the TikTok video as an attachment
+    await conn.sendMessage(from, {
+      video: { url: videoUrl }, // Attach the video
+      caption: "🎥 *TikTok Video Downloader*\n🔗 *Original URL*: " + tiktokUrl,
+    });
+  } catch (error) {
+    console.error("Error downloading TikTok video:", error);
+    reply("❌ Unable to download the TikTok video. Please try again later.");
+  }
+});
