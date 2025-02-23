@@ -36,7 +36,7 @@ cmd({
 
     await conn.sendMessage(m.chat, {
       image: imageBuffer,
-      caption: `🤖 *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ* \n\n*✨ ᴘʀᴏᴍᴘᴛ:* *${q}*`
+      caption: `* 🤖 ᴘʀᴏᴍᴘᴛ : ${q}*\n\n> © *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ*`
     });
 
   } catch (error) {
@@ -70,7 +70,7 @@ cmd({
 
     await conn.sendMessage(m.chat, {
       image: imageBuffer,
-      caption: `🤖 *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ* \n\n*✨ ᴘʀᴏᴍᴘᴛ : ${q}*`
+      caption: `* 🤖 ᴘʀᴏᴍᴘᴛ : ${q}*\n\n> © *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ*`
     });
 
   } catch (error) {
@@ -104,7 +104,7 @@ cmd({
 
     await conn.sendMessage(m.chat, {
       image: imageBuffer,
-      caption: `🤖 *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ*\n\n*✨ ᴘʀᴏᴍᴘᴛ: ${q}*`
+      caption: `* 🤖 ᴘʀᴏᴍᴘᴛ : ${q}*\n\n> © *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ*`
     });
 
   } catch (error) {
