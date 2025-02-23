@@ -3,8 +3,8 @@ const { cmd, commands } = require('../command');
 const axios = require('axios');
 
 cmd({
-  pattern: 'analyse',
-  alias: ['vision'],
+  pattern: 'analyse2',
+  alias: ['vision2'],
   react: '💡',
   desc: 'Analyze image with instruction.',
   category: 'tools',
@@ -44,10 +44,10 @@ cmd({
     const base64String = buffer.toString('base64');
     await reply('```Analysing Image wait...🔎```');
 
-    // Hugging Face Inference API (using BLIP model)
-    const apiUrl = 'https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large';
+    // DeepAI Image Analysis API
+    const apiUrl = 'https://api.deepai.org/api/colorizer';
     const response = await axios.post(apiUrl, {
-      inputs: base64String, // Send the base64 image
+      image: base64String, // Send the base64 image
     }, {
       headers: {
         'Content-Type': 'application/json',
@@ -55,8 +55,8 @@ cmd({
     });
 
     // Extract the generated caption
-    const caption = response.data[0]?.generated_text || 'No description available.';
-    await reply(`🧠 *Image Analysis Result*:\n\n${caption}\n\n> Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ 🚀`);
+    const caption = response.data.output || 'No description available.';
+    await reply(`📷 *Image Analysis Result*:\n\n${caption}`);
   } catch (error) {
     const errorMessage = error.message || 'An unknown error occurred.';
     const maxErrorLength = 200;
