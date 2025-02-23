@@ -4,7 +4,7 @@ const axios = require("axios");
 
 cmd({
   pattern: "ytstalk",
-  alias: ["youtubestalk", "yt"],
+  alias: ["youtubestalk", "ytsearch"],
   desc: "Get information about a YouTube channel, including their profile picture, stats, and latest videos.",
   category: "utility",
   use: ".ytstalk <username>",
