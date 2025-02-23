@@ -14,7 +14,7 @@ const fs = require("fs");
 cmd({
   pattern: "imagine",
   alias: ["bingimg", "metaimg"],
-  react: "🚀",
+  react: "✨",
   desc: "Generate an image using AI.",
   category: "main",
   filename: __filename
@@ -48,7 +48,7 @@ cmd({
 cmd({
   pattern: "stablediffusion",
   alias: ["sdiffusion", "imagine2"],
-  react: "🚀",
+  react: "✨",
   desc: "Generate an image using AI.",
   category: "main",
   filename: __filename
@@ -70,7 +70,7 @@ cmd({
 
     await conn.sendMessage(m.chat, {
       image: imageBuffer,
-      caption: `🧩 *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ* \n\n*✨ ᴘʀᴏᴍᴘᴛ : ${q}*`
+      caption: `🤖 *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ* \n\n*✨ ᴘʀᴏᴍᴘᴛ : ${q}*`
     });
 
   } catch (error) {
@@ -104,7 +104,7 @@ cmd({
 
     await conn.sendMessage(m.chat, {
       image: imageBuffer,
-      caption: `🧩 *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ*\n\n*✨ ᴘʀᴏᴍᴘᴛ: ${q}*`
+      caption: `🤖 *Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ*\n\n*✨ ᴘʀᴏᴍᴘᴛ: ${q}*`
     });
 
   } catch (error) {
