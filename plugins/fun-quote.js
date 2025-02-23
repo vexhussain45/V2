@@ -11,18 +11,22 @@ cmd({
   filename: __filename,
 }, async (conn, mek, msg, { from, args, reply }) => {
   try {
-    // Fetch a random quote from the Quotable API
-    const response = await axios.get("https://api.quotable.io/random");
+    // Fetch a random quote from the Forismatic API
+    const response = await axios.get("http://api.forismatic.com/api/1.0/", {
+      params: {
+        method: "getQuote",
+        format: "json",
+        lang: "en",
+      },
+    });
 
-    const { content, author, tags } = response.data;
+    const { quoteText, quoteAuthor } = response.data;
 
     // Format the quote message
     const quoteMessage = `
-💬 *Quote*: ${content}
+💬 *Quote*: ${quoteText}
 
-👤 *Author*: ${author}
-
-🏷️ *Tags*: ${tags.join(", ")}
+👤 *Author*: ${quoteAuthor || "Unknown"}
     `;
 
     reply(quoteMessage);
