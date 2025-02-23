@@ -1,3 +1,125 @@
+
+const config = require('../config');
+const { cmd, commands } = require('../command');
+const axios = require("axios");
+
+// Local riddles as a fallback (if API fails)
+const localRiddles = [
+  {
+    riddle: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
+    answer: "An echo",
+    options: ["A shadow", "An echo", "A whistle", "A cloud"],
+  },
+  {
+    riddle: "The more of me you take, the more you leave behind. What am I?",
+    answer: "Footsteps",
+    options: ["Footsteps", "Breath", "Time", "Memories"],
+  },
+  {
+    riddle: "What has keys but can’t open locks?",
+    answer: "A piano",
+    options: ["A door", "A map", "A piano", "A keyboard"],
+  },
+];
+
+cmd({
+  pattern: "riddle",
+  alias: ["puzzle", "brainteaser"],
+  desc: "Get a random riddle with 4 possible answers. The correct answer is revealed after 15 seconds.",
+  category: "utility",
+  use: ".riddle",
+  filename: __filename,
+}, async (conn, mek, msg, { from, args, reply, react }) => {
+  try {
+    // Add a reaction to indicate the bot is processing the request
+ //   await react("⏳"); // Hourglass emoji for processing
+
+    let riddleData;
+
+    // Try fetching a riddle from an API (if available)
+    try {
+      const response = await axios.get("https://api.riddles.io/riddle/random");
+      riddleData = {
+        riddle: response.data.riddle,
+        answer: response.data.answer,
+        options: shuffleArray([response.data.answer, ...generateRandomOptions(response.data.answer)]),
+      };
+    } catch (apiError) {
+      console.error("API Error, using local riddles:", apiError);
+      // Use a random riddle from the local list if the API fails
+      riddleData = localRiddles[Math.floor(Math.random() * localRiddles.length)];
+    }
+
+    const { riddle, answer, options } = riddleData;
+
+    // Format the riddle message with options
+    const riddleMessage = `
+🤔 *Riddle*: ${riddle}
+
+🅰️ ${options[0]}
+🅱️ ${options[1]}
+🅾️ ${options[2]}
+🆎 ${options[3]}
+
+⏳ The answer will be revealed in 15 seconds...
+    `;
+
+    // Send the riddle message
+    await reply(riddleMessage);
+
+    // Add a success reaction
+   // await react("✅"); // Checkmark emoji for success
+
+    // Wait for 15 seconds before revealing the answer
+    setTimeout(async () => {
+      const answerMessage = `
+🎉 *Answer*: ${answer}
+
+💡 *Explanation*: If you got it right, well done! If not, better luck next time!
+      `;
+      await reply(answerMessage);
+    }, 15000); // 15 seconds delay
+  } catch (error) {
+    console.error("Error fetching riddle:", error);
+
+    // Add an error reaction
+  //  await react("❌"); // Cross mark emoji for failure
+
+    // Send an error message
+    reply("❌ Unable to fetch a riddle. Please try again later.");
+  }
+});
+
+// Helper function to shuffle an array (for randomizing options)
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Helper function to generate random incorrect options
+function generateRandomOptions(correctAnswer) {
+  const allOptions = [
+    "A shadow",
+    "A whistle",
+    "A cloud",
+    "Footsteps",
+    "Breath",
+    "Time",
+    "Memories",
+    "A piano",
+    "A map",
+    "A keyboard",
+  ];
+  const filteredOptions = allOptions.filter((opt) => opt !== correctAnswer);
+  return shuffleArray(filteredOptions).slice(0, 3); // Pick 3 random incorrect options
+}
+
+
+
+
 // SUBZERO MD PROPERTY
 // MADE BY MR FRANK
 // REMOVE THIS IF YOU ARE GAY
