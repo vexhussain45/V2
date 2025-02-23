@@ -3,25 +3,6 @@ const config = require('../config');
 const { cmd, commands } = require('../command');
 const axios = require("axios");
 
-// Local riddles as a fallback (if API fails)
-const localRiddles = [
-  {
-    riddle: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
-    answer: "An echo",
-    options: ["A shadow", "An echo", "A whistle", "A cloud"],
-  },
-  {
-    riddle: "The more of me you take, the more you leave behind. What am I?",
-    answer: "Footsteps",
-    options: ["Footsteps", "Breath", "Time", "Memories"],
-  },
-  {
-    riddle: "What has keys but can’t open locks?",
-    answer: "A piano",
-    options: ["A door", "A map", "A piano", "A keyboard"],
-  },
-];
-
 cmd({
   pattern: "riddle",
   alias: ["puzzle", "brainteaser"],
@@ -32,25 +13,14 @@ cmd({
 }, async (conn, mek, msg, { from, args, reply, react }) => {
   try {
     // Add a reaction to indicate the bot is processing the request
- //   await react("⏳"); // Hourglass emoji for processing
+    await react("⏳"); // Hourglass emoji for processing
 
-    let riddleData;
+    // Fetch a random riddle from the API
+    const response = await axios.get("https://api.riddles.io/riddle/random");
+    const { riddle, answer } = response.data;
 
-    // Try fetching a riddle from an API (if available)
-    try {
-      const response = await axios.get("https://api.riddles.io/riddle/random");
-      riddleData = {
-        riddle: response.data.riddle,
-        answer: response.data.answer,
-        options: shuffleArray([response.data.answer, ...generateRandomOptions(response.data.answer)]),
-      };
-    } catch (apiError) {
-      console.error("API Error, using local riddles:", apiError);
-      // Use a random riddle from the local list if the API fails
-      riddleData = localRiddles[Math.floor(Math.random() * localRiddles.length)];
-    }
-
-    const { riddle, answer, options } = riddleData;
+    // Generate 4 options (1 correct and 3 random incorrect ones)
+    const options = await generateOptions(answer);
 
     // Format the riddle message with options
     const riddleMessage = `
@@ -68,7 +38,7 @@ cmd({
     await reply(riddleMessage);
 
     // Add a success reaction
-   // await react("✅"); // Checkmark emoji for success
+    await react("✅"); // Checkmark emoji for success
 
     // Wait for 15 seconds before revealing the answer
     setTimeout(async () => {
@@ -83,12 +53,31 @@ cmd({
     console.error("Error fetching riddle:", error);
 
     // Add an error reaction
-  //  await react("❌"); // Cross mark emoji for failure
+    await react("❌"); // Cross mark emoji for failure
 
     // Send an error message
     reply("❌ Unable to fetch a riddle. Please try again later.");
   }
 });
+
+// Helper function to generate 4 options (1 correct and 3 random incorrect ones)
+async function generateOptions(correctAnswer) {
+  try {
+    // Fetch random words or incorrect answers from an API (e.g., Random Word API)
+    const randomWordsResponse = await axios.get("https://random-word-api.herokuapp.com/word?number=3");
+    const randomWords = randomWordsResponse.data;
+
+    // Combine the correct answer with 3 random words
+    const options = [correctAnswer, ...randomWords];
+
+    // Shuffle the options to randomize their order
+    return shuffleArray(options);
+  } catch (error) {
+    console.error("Error generating options:", error);
+    // Fallback to simple options if the API fails
+    return [correctAnswer, "A shadow", "A whistle", "A cloud"];
+  }
+}
 
 // Helper function to shuffle an array (for randomizing options)
 function shuffleArray(array) {
@@ -98,27 +87,6 @@ function shuffleArray(array) {
   }
   return array;
 }
-
-// Helper function to generate random incorrect options
-function generateRandomOptions(correctAnswer) {
-  const allOptions = [
-    "A shadow",
-    "A whistle",
-    "A cloud",
-    "Footsteps",
-    "Breath",
-    "Time",
-    "Memories",
-    "A piano",
-    "A map",
-    "A keyboard",
-  ];
-  const filteredOptions = allOptions.filter((opt) => opt !== correctAnswer);
-  return shuffleArray(filteredOptions).slice(0, 3); // Pick 3 random incorrect options
-}
-
-
-
 
 // SUBZERO MD PROPERTY
 // MADE BY MR FRANK
