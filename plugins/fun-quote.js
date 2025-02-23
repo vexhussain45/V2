@@ -4,6 +4,7 @@ const axios = require("axios");
 
 cmd({
   pattern: "quote",
+  react: "💬",
   alias: ["randomquote", "inspire"],
   desc: "Get a random inspirational quote.",
   category: "utility",
