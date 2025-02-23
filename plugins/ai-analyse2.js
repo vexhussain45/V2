@@ -1,54 +1,70 @@
 const config = require('../config');
 const { cmd, commands } = require('../command');
-const axios = require("axios");
+const axios = require('axios');
 
 cmd({
-  pattern: "analyzeimage",
-  alias: ["img2text", "imageanalysis"],
-  desc: "Analyze an image and generate a text description. Reply to an image or provide an image URL.",
-  category: "utility",
-  use: ".analyzeimage <image_url> (or reply to an image)",
-  filename: __filename,
-}, async (conn, mek, msg, { from, args, reply, quoted }) => {
+  pattern: 'analyse2',
+  alias: ['vision2'],
+  react: '💡',
+  desc: 'Analyze image with instruction.',
+  category: 'tools',
+  filename: __filename
+}, async (conn, mek, m, {
+  from,
+  quoted,
+  body,
+  isCmd,
+  command,
+  args,
+  q,
+  isGroup,
+  sender,
+  senderNumber,
+  botNumber2,
+  botNumber,
+  pushname,
+  isMe,
+  isOwner,
+  groupMetadata,
+  groupName,
+  participants,
+  groupAdmins,
+  isBotAdmins,
+  isAdmins,
+  reply
+}) => {
+  if (!quoted) return reply('Quote an image with instructions for bot to analyze.');
+  if (!body) return reply('Please provide instructions for the bot to analyze the image.');
+  if (!q) return reply('What do you want me to do?');
+
   try {
-    let imageUrl;
+    const buffer = await m.quoted.download();
+    if (!buffer) return reply('Failed to download the quoted image.');
 
-    // Check if the user replied to an image
-    if (quoted && quoted.type === "image") {
-      // Get the image URL from the quoted message
-      imageUrl = await conn.downloadAndSaveMediaMessage(quoted, "image");
-    } else if (args.length > 0) {
-      // Use the provided image URL
-      imageUrl = args[0];
-    } else {
-      return reply("❌ Please provide an image URL or reply to an image.");
-    }
+    const base64String = buffer.toString('base64');
+    await reply('```Analysing Image wait...🔎```');
 
-    // If the image is a local file (downloaded from a reply), upload it to a temporary URL
-    if (imageUrl.startsWith("/")) {
-      // Upload the image to a temporary URL (you can use a service like imgur or any other)
-      // For simplicity, we'll assume the image is already a URL
-      return reply("❌ Local image upload is not supported. Please provide a direct image URL.");
-    }
+    // Hugging Face Inference API (using BLIP model)
+    const apiUrl = 'https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large';
+    const response = await axios.post(apiUrl, {
+      inputs: base64String, // Send the base64 image
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-    // Analyze the image using the API
-    const response = await axios.get(`https://api.siputzx.my.id/api/ai/image2text?url=${encodeURIComponent(imageUrl)}`);
-    const { status, data } = response.data;
-
-    if (!status || !data) {
-      return reply("❌ Unable to analyze the image. Please try again.");
-    }
-
-    // Send the analysis result
-    const analysisMessage = `
-📷 *Image Analysis Result*:
-
-${data}
-    `;
-
-    reply(analysisMessage);
+    // Extract the generated caption
+    const caption = response.data[0]?.generated_text || 'No description available.';
+    await reply(`📷 *Image Analysis Result*:\n\n${caption}`);
   } catch (error) {
-    console.error("Error analyzing image:", error);
-    reply("❌ Unable to analyze the image. Please try again later.");
+    const errorMessage = error.message || 'An unknown error occurred.';
+    const maxErrorLength = 200;
+    const replyMessage = errorMessage.length > maxErrorLength
+      ? errorMessage.substring(0, maxErrorLength) + '...'
+      : errorMessage;
+
+    console.error('Error in sending request:', error);
+    await reply(replyMessage);
   }
 });
