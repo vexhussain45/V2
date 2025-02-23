@@ -1,245 +1,33 @@
-/*
-
-$$$$$$\            $$\                                               
-$$  __$$\           $$ |                                              
-$$ /  \__|$$\   $$\ $$$$$$$\  $$$$$$$$\  $$$$$$\   $$$$$$\   $$$$$$\  
-\$$$$$$\  $$ |  $$ |$$  __$$\ \____$$  |$$  __$$\ $$  __$$\ $$  __$$\ 
- \____$$\ $$ |  $$ |$$ |  $$ |  $$$$ _/ $$$$$$$$ |$$ |  \__|$$ /  $$ |
-$$\   $$ |$$ |  $$ |$$ |  $$ | $$  _/   $$   ____|$$ |      $$ |  $$ |
-\$$$$$$  |\$$$$$$  |$$$$$$$  |$$$$$$$$\ \$$$$$$$\ $$ |      \$$$$$$  |
- \______/  \______/ \_______/ \________| \_______|\__|       \______/
-
-Project Name : SubZero MD
-Creator      : Darrell Mucheri ( Mr Frank OFC )
-Repo         : https//github.com/mrfrank-ofc/SUBZERO-MD
-Support      : wa.me/18062212660
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const axios = require('axios');
-const { cmd } = require('../command');
+const config = require('../config');
+const { cmd, commands } = require('../command');
+const axios = require("axios");
 
 cmd({
-    pattern: "quote",
-    desc: "Get a random inspiring quote.",
-    category: "fun",
-    react: "💬",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const response = await axios.get('https://api.gifted.my.id/api/fun/quotes?apikey=gifted');
-        const quote = response.data;
-        const message = `
-💬 "${quote.content}"
-- ${quote.author}
-*QUOTES BY MR FRANK OFC*
-        `;
-        return reply(message);
-    } catch (e) {
-        console.error("Error fetching quote:", e);
-        reply("¢συℓ∂ ησт ƒєт¢н α qυσтє. ρℓєαѕє тяу αgαιη ℓαтєя.");
-    }
+  pattern: "quote",
+  alias: ["randomquote", "inspire"],
+  desc: "Get a random inspirational quote.",
+  category: "utility",
+  use: ".quote",
+  filename: __filename,
+}, async (conn, mek, msg, { from, args, reply }) => {
+  try {
+    // Fetch a random quote from the Quotable API
+    const response = await axios.get("https://api.quotable.io/random");
+
+    const { content, author, tags } = response.data;
+
+    // Format the quote message
+    const quoteMessage = `
+💬 *Quote*: ${content}
+
+👤 *Author*: ${author}
+
+🏷️ *Tags*: ${tags.join(", ")}
+    `;
+
+    reply(quoteMessage);
+  } catch (error) {
+    console.error("Error fetching quote:", error);
+    reply("❌ Unable to fetch a quote. Please try again later.");
+  }
 });
