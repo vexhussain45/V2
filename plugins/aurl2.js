@@ -6,10 +6,10 @@ const fs = require('fs'); // For handling file system operations
 const path = require('path'); // For handling file paths
 
 cmd({
-  pattern: 'hdimg',
-  react: '✨',
-  desc: 'Enhance an image using Remini',
-  category: 'image',
+  pattern: 'upload',
+  react: '📤',
+  desc: 'Upload media (images/videos) to file.io and get the URL',
+  category: 'utility',
   filename: __filename
 }, async (conn, mek, m, {
   body,
@@ -35,21 +35,21 @@ cmd({
   isAdmins,
   reply
 }) => {
-    // Check if the quoted message is an image
-    if (!quoted || !quoted.mimetype.startsWith('image')) {
-        return reply(`❌ Reply to an image with .remini to enhance it.`);
+    // Check if the quoted message is an image or video
+    if (!quoted || !(quoted.mimetype.startsWith('image') || !quoted.mimetype.startsWith('video'))) {
+        return reply(`❌ Reply to an image or video to upload it.`);
     }
 
     try {
-        // Download the image
+        // Download the media
         const media = await quoted.download();
         const fileType = quoted.mimetype.split('/')[1]; 
 
-        // Save the image temporarily
-        const tempFilePath = path.join(__dirname, `temp_image.${fileType}`);
+        // Save the media temporarily
+        const tempFilePath = path.join(__dirname, `temp_media.${fileType}`);
         fs.writeFileSync(tempFilePath, media);
 
-        // Upload the image to file.io
+        // Upload the media to file.io
         const formData = new FormData();
         formData.append('file', fs.createReadStream(tempFilePath));
 
@@ -61,30 +61,17 @@ cmd({
         fs.unlinkSync(tempFilePath);
 
         if (!uploadResponse.data || !uploadResponse.data.success) {
-            return reply(`❌ Failed to upload image to file.io. Response: ${JSON.stringify(uploadResponse.data)}`);
+            return reply(`❌ Failed to upload media to file.io. Response: ${JSON.stringify(uploadResponse.data)}`);
         }
 
-        const imageUrl = uploadResponse.data.link;
-        console.log('Image uploaded to file.io. URL:', imageUrl); // Debugging
+        const fileUrl = uploadResponse.data.link;
+        console.log('Media uploaded to file.io. URL:', fileUrl); // Debugging
 
-        // Enhance the image using the Remini API
-        const enhancedImageUrl = `https://apis.davidcyriltech.my.id/remini?url=${imageUrl}`;
-        console.log('Enhancing image with URL:', enhancedImageUrl); // Debugging
-
-        // Fetch the enhanced image
-        const enhancedImageResponse = await axios.get(enhancedImageUrl, { responseType: 'arraybuffer' });
-        if (!enhancedImageResponse.data) {
-            return reply(`❌ Failed to enhance image.`);
-        }
-
-        // Send the enhanced image back to the user
-        await conn.sendMessage(m.chat, {
-            image: enhancedImageResponse.data,
-            caption: `✨ *Image Enhanced Successfully!*\n🔗 Original URL: ${imageUrl}`
-        }, { quoted: m });
+        // Send the file URL back to the user
+        await reply(`✅ *Media Uploaded Successfully!*\n\n🔗 *URL:* ${fileUrl}\n\n⚠️ *Note:* This link will expire after 14 days.`);
 
     } catch (error) {
-        console.error('Error in Remini command:', error);
+        console.error('Error in upload command:', error);
         reply(`❌ Error: ${error.message}`);
     }
 });
