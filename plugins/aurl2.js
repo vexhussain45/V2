@@ -60,18 +60,26 @@ cmd({
         // Delete the temporary file
         fs.unlinkSync(tempFilePath);
 
-        if (!uploadResponse.data.success) {
-            return reply(`❌ Failed to upload image to file.io.`);
+        if (!uploadResponse.data || !uploadResponse.data.success) {
+            return reply(`❌ Failed to upload image to file.io. Response: ${JSON.stringify(uploadResponse.data)}`);
         }
 
         const imageUrl = uploadResponse.data.link;
+        console.log('Image uploaded to file.io. URL:', imageUrl); // Debugging
 
         // Enhance the image using the Remini API
         const enhancedImageUrl = `https://apis.davidcyriltech.my.id/remini?url=${imageUrl}`;
+        console.log('Enhancing image with URL:', enhancedImageUrl); // Debugging
+
+        // Fetch the enhanced image
+        const enhancedImageResponse = await axios.get(enhancedImageUrl, { responseType: 'arraybuffer' });
+        if (!enhancedImageResponse.data) {
+            return reply(`❌ Failed to enhance image.`);
+        }
 
         // Send the enhanced image back to the user
         await conn.sendMessage(m.chat, {
-            image: { url: enhancedImageUrl },
+            image: enhancedImageResponse.data,
             caption: `✨ *Image Enhanced Successfully!*\n🔗 Original URL: ${imageUrl}`
         }, { quoted: m });
 
