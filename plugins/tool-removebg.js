@@ -34,7 +34,7 @@ cmd({
 }) => {
     if (!/image/.test(mime)) return reply(`❌ Reply to an *image* with .removebg to remove background.`);
 
-    await conn.sendMessage(m.chat, { react: { text: `⏳`, key: m.key } });
+    // await conn.sendMessage(m.chat, { react: { text: `⏳`, key: m.key } });
 
     try {
         const media = await m.quoted.download();
@@ -52,7 +52,7 @@ cmd({
             caption: `🖼️ *Background Removed Successfully!*`
         }, { quoted: m });
 
-        await conn.sendMessage(m.chat, { react: { text: `✅`, key: m.key } });
+        // await conn.sendMessage(m.chat, { react: { text: `✅`, key: m.key } });
 
     } catch (error) {
         console.error('Error in RemoveBG command:', error);
