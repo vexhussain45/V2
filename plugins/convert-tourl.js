@@ -50,7 +50,7 @@ cmd({
 
     // Download the media file
     const mediaBuffer = await quotedMessage.download();
-    const tempFilePath = path.join(os.tmpdir(), "temp_image.jpg");
+    const tempFilePath = path.join(os.tmpdir(), "subzero_bot.jpg"); // I dare you to change it !
     fs.writeFileSync(tempFilePath, mediaBuffer);
 
     // Upload the media to imgBB
