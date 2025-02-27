@@ -76,7 +76,7 @@ cmd({
     fs.unlinkSync(tempFilePath);
 
     // Send the URL to the user
-    await reply(`*\`Image Uploaded Successfully!\`*\n──────────────────────\n\n📂 *File Size:* ${mediaBuffer.length} bytes\n🔗 *URL:* ${imageUrl}\n\n──────────────────────\n> © ᴘϙᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ `);
+    await reply(`\`IMAGE UPLOADED SUCCESSFULLY!\`\n\n──────────────────────\n📂 *File Size:* ${mediaBuffer.length} bytes\n🔗 *URL:* ${imageUrl}\n\n──────────────────────\n> © ᴘϙᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ `);
 
   } catch (error) {
     console.error("Error in tourl command:", error);
