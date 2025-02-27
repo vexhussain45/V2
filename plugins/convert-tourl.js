@@ -23,25 +23,6 @@ const _0x13eed5=_0x3acc;(function(_0x389a34,_0x4b032d){const _0x41de97=_0x3acc,_
 
 
 
-/*───────────────────────────────────────────────────────────────────────────────
-    ⭐ PROJECT NAME: SUBZERO WHATSAPP MD BOT
-
-    ⭐ DEVELOPER: MR FRANK
-
-    ⭐ MY TEAM: XERO CODERS
-
-    ⭐ OUR WEBSITE: https://github.com/ZwSyntax/SUBZERO-MD
-
-    © TRY DECRYPTING IF YOU CAN ⚠
-───────────────────────────────────────────────────────────────────────────────*/
-
-// Hey, Fuck Off
-
-function hi() {
-  console.log("Hello World!");
-}
-hi();
-
 const axios = require("axios");
 const FormData = require('form-data');
 const fs = require('fs');
@@ -54,33 +35,32 @@ cmd({
   alias: ["imgtourl", "imgurl", "url"],
   react: '🖇',
   desc: "Convert an image to a URL.",
-  category: "anime",
-  use: ".tourl",
+  category: "utility",
+  use: ".tourl (reply to an image)",
   filename: __filename
-}, async (conn, mek, m, {
-  from: chatId,
-  quoted: quotedMessage,
-  reply: replyFunction
-}) => {
+}, async (conn, mek, m, { reply }) => {
   try {
     // Check if the message is a quoted message or contains media
-    const mediaMessage = quotedMessage ? quotedMessage : m;
-    const mimeType = (mediaMessage.msg || mediaMessage).mimetype || '';
+    const quotedMessage = m.quoted ? m.quoted : m;
+    const mimeType = (quotedMessage.msg || quotedMessage).mimetype || '';
 
-    if (!mimeType) {
-      throw "🌻 Reply to an image.";
+    if (!mimeType || !mimeType.startsWith('image')) {
+      return reply("🌻 Please reply to an image.");
     }
 
     // Download the media file
-    const mediaBuffer = await mediaMessage.download();
-    const tempFilePath = path.join(os.tmpdir(), "mrfrankofc");
+    const mediaBuffer = await quotedMessage.download();
+    const tempFilePath = path.join(os.tmpdir(), "temp_image.jpg");
     fs.writeFileSync(tempFilePath, mediaBuffer);
 
     // Upload the media to imgBB
     const formData = new FormData();
     formData.append('image', fs.createReadStream(tempFilePath));
 
-    const uploadResponse = await axios.post("https://api.imgbb.com/1/upload?key=4a9c3527b0cd8b12dd4d8ab166a0f592", formData, {
+    const uploadResponse = await axios.post("https://api.imgbb.com/1/upload", formData, {
+      params: {
+        key: "4a9c3527b0cd8b12dd4d8ab166a0f592" // Replace with your imgBB API key
+      },
       headers: {
         ...formData.getHeaders()
       }
@@ -96,11 +76,10 @@ cmd({
     fs.unlinkSync(tempFilePath);
 
     // Send the URL to the user
-    await replyFunction(`*SUBZERO UPLOADED SUCCESSFULLY*\n\n${mediaBuffer.length} Byte(s)\n\n*URL:* ${imageUrl}\n\n> *© Uploaded by SUBZERO MD ❄️*`);
+    await reply(`*Image Uploaded Successfully!*\n\n📂 *File Size:* ${mediaBuffer.length} bytes\n🔗 *URL:* ${imageUrl}\n\n> Powered by imgBB`);
 
   } catch (error) {
-    replyFunction(`❌ Error: ${error}`);
-    console.error(error);
+    console.error("Error in tourl command:", error);
+    reply(`❌ Error: ${error.message || error}`);
   }
 });
-
