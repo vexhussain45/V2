@@ -6,7 +6,7 @@ const { cmd } = require('../command');
 const config = require('../config');
 
 // Developer's WhatsApp number
-const DEVELOPER_NUMBER = '263719647303@s.whatsapp.net'; // Replace with your number
+const MRFRANK = '263719647303@s.whatsapp.net'; // Replace with your number
 
 cmd({
     pattern: 'report',
@@ -54,8 +54,8 @@ cmd({
                                `*📩 Message:* ${reportMessage}`;
 
         // Send the report to the developer with an image
-        await conn.sendMessage(DEVELOPER_NUMBER, {
-            image: { url: 'https://i.ibb.co/Q7cZdxsR/mrfrankofc.jpg' }, // Image URL
+        await conn.sendMessage(MRFRANK, {
+            image: { url: 'https://i.postimg.cc/k4Kd698F/IMG-20250305-WA0000.jpg' }, // Image URL
             caption: formattedReport,
             contextInfo: {
                 mentionedJid: [m.sender],
@@ -71,7 +71,7 @@ cmd({
 
         // Notify the user with an image
         await conn.sendMessage(from, {
-            image: { url: 'https://i.ibb.co/Q7cZdxsR/mrfrankofc.jpg' }, // Image URL
+            image: { url: 'https://i.postimg.cc/k4Kd698F/IMG-20250305-WA0000.jpg' }, // Image URL
             caption: 'Your report has been sent to the developer. Thank you!✅',
             contextInfo: {
                 mentionedJid: [m.sender],
