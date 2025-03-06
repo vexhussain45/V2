@@ -55,7 +55,7 @@ cmd({
 await conn.sendMessage(
             from,
             {
-                image: { url: `https://i.ibb.co/dwmbSTkL/mrfrankofc.jpg` },
+                image: { url: `https://i.postimg.cc/brRcgTmZ/IMG-20250305-WA0004.jpg` },
                 caption: message,
                 contextInfo: {
                     mentionedJid: [m.sender],
