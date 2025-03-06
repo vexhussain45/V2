@@ -40,7 +40,7 @@ cmd({
         
     // Send the standings with an image
     await conn.sendMessage(from, {
-      image: { url: `https://i.ibb.co/4g5ZZnWZ/mrfrankofc.jpg` }, // Image URL
+      image: { url: `https://i.postimg.cc/nVKJnFnn/IMG-20250305-WA0005.jpg` }, // Image URL
       caption: message,
       contextInfo: {
         mentionedJid: [m.sender],
@@ -92,7 +92,7 @@ cmd({
         
     // Send the standings with an image
     await conn.sendMessage(from, {
-      image: { url: `https://i.ibb.co/KjBxCbrM/mrfrankofc.jpg` }, // Image URL
+      image: { url: `https://i.postimg.cc/nVKJnFnn/IMG-20250305-WA0005.jpg` }, // Image URL
       caption: message,
       contextInfo: {
         mentionedJid: [m.sender],
@@ -144,7 +144,7 @@ cmd({
         
     // Send the standings with an image
     await conn.sendMessage(from, {
-      image: { url: `https://i.ibb.co/JRCwLzd1/mrfrankofc.jpg` }, // Image URL
+      image: { url: `https://i.postimg.cc/nVKJnFnn/IMG-20250305-WA0005.jpg` }, // Image URL
       caption: message,
       contextInfo: {
         mentionedJid: [m.sender],
