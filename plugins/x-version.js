@@ -61,7 +61,7 @@ cmd({
 //});
        // Send the status message with an image
         await conn.sendMessage(from, { 
-            image: { url: `https://i.ibb.co/nzGyYCk/mrfrankofc.jpg` },  // Image URL
+            image: { url: `https://i.postimg.cc/zv76KffW/IMG-20250115-WA0020.jpg` },  // Image URL
             caption: message,
             contextInfo: {
                 mentionedJid: [m.sender],
