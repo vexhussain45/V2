@@ -2,11 +2,12 @@ const { cmd } = require('../command');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
 
 cmd({
     pattern: "install",
     alias: ["addplugin"],
-    desc: "Install a plugin from a GitHub Gist URL.",
+    desc: "Install a plugin from a GitHub Gist URL and restart the bot.",
     react: "📥",
     category: "plugin",
     filename: __filename
@@ -39,6 +40,15 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
             await fs.promises.writeFile(pluginPath, file.content);
             reply(`✅ Successfully installed the plugin: *${pluginName}*`);
         }
+
+        // Notify the bot is restarting
+        reply("🔄 Restarting the bot to apply changes...");
+
+        // Restart the bot
+        setTimeout(() => {
+            process.exit(0); // Exit the process
+        }, 2000); // Wait 2 seconds before restarting
+
     } catch (error) {
         console.error(error);
         reply(`Error: ${error.message}`);
