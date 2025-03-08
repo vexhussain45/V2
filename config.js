@@ -31,7 +31,7 @@ OWNER_NAME: process.env.OWNER_NAME || "Mr Frank",
 // add bot owner name
 DESCRIPTION: process.env.DESCRIPTION || "*© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ*",
 // add bot owner name    
-ALIVE_IMG: process.env.ALIVE_IMG || "",
+ALIVE_IMG: process.env.ALIVE_IMG || "https://i.postimg.cc/zv76KffW/IMG-20250115-WA0020.jpg",
 // add img for alive msg
 READ_MESSAGE: process.env.READ_MESSAGE || "false",
 // Turn true or false for automatic read msgs
