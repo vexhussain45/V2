@@ -1,4 +1,4 @@
-const { cmd } = require('../command');
+/* const { cmd } = require('../command');
 const User = require('../models/User');
 const connectDB = require('../lib/db'); // Require the db.js function
 
@@ -84,4 +84,4 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         console.error(e);
         reply(`An error occurred while trying to ban the user. Please try again.`);
     }
-});
+}); */
