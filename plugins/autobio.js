@@ -1,144 +1,125 @@
-/*const connectDB = require('../lib/db'); // Import the MongoDB connection
-const { cmd } = require('../command');
-const config = require('../config');
-const BotSettings = require('../models/BotSettings'); // Import the model
+const axios = require("axios");
+const yts = require("yt-search");
+const ffmpeg = require("fluent-ffmpeg");
+const { cmd } = require("../command");
+const fs = require("fs");
+const path = require("path");
 
-
-// Connect to MongoDB
-connectDB();
-
-// Function to update autoBio setting
-async function updateAutoBio(userId, status) {
-    await BotSettings.findOneAndUpdate(
-        { userId },
-        { autoBio: status },
-        { upsert: true, new: true }
-    );
-}
-
-// Function to get autoBio setting
-async function getAutoBio(userId) {
-    const settings = await BotSettings.findOne({ userId });
-    return settings ? settings.autoBio : false;
-}
-
-// Command to toggle autoBio
 cmd({
-    pattern: 'autobio',
-    alias: ['bio'],
-    react: '📝',
-    desc: 'Toggle autoBio on/off',
-    category: 'misc',
-    filename: __filename
-}, async (conn, mek, m, {
-    from,
-    quoted,
-    body,
-    isCmd,
-    command,
-    args,
-    q,
-    isGroup,
-    sender,
-    senderNumber,
-    botNumber2,
-    botNumber,
-    pushname,
-    isMe,
-    isOwner,
-    groupMetadata,
-    groupName,
-    participants,
-    groupAdmins,
-    isBotAdmins,
-    isAdmins,
-    reply
-}) => {
-    if (!isOwner) return reply('This command is only for the bot owner.');
-
-    try {
-        const [action, status] = body.split(' ');
-
-        if (!action || !['on', 'off'].includes(status?.toLowerCase())) {
-            return reply('Usage: `.autobio on` or `.autobio off`');
-        }
-
-        const newStatus = status.toLowerCase() === 'on';
-        await updateAutoBio(sender, newStatus);
-
-        // Send the status message with an image
-        await conn.sendMessage(from, {
-            image: { url: 'https://i.ibb.co/nzGyYCk/mrfrankofc.jpg' }, // Image URL
-            caption: `AutoBio has been turned ${newStatus ? 'on ✅' : 'off ❌'}.`,
-            contextInfo: {
-                mentionedJid: [m.sender],
-                forwardingScore: 999,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363304325601080@newsletter',
-                    newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
-                    serverMessageId: 143
-                }
-            }
-        }, { quoted: mek });
-
-    } catch (error) {
-        console.error('Error in autobio command:', error);
-        reply('An error occurred while processing your request.');
+  pattern: "playpro",
+  alias: ["ytmp3pro", "mp3pro", "musicpro"],
+  react: '🎵',
+  desc: "Download songs from YouTube.",
+  category: "download",
+  use: ".song <YouTube URL or song name>",
+  filename: __filename
+}, async (conn, mek, m, { from, reply, args, q }) => {
+  try {
+    // Check if the user provided a query
+    if (!q) {
+      return reply('Please provide a YouTube URL or song name. Example: `.song https://youtube.com/...` or `.song Believer`');
     }
+
+    // Add a reaction to indicate processing
+    await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
+
+    let videoUrl = q;
+    let searchData = null;
+
+    // If the user provided a song name instead of a URL
+    if (!q.startsWith("https://")) {
+      const searchResults = await yts(q);
+      if (!searchResults.videos.length) {
+        return reply('❌ No results found. Please try a different query.');
+      }
+
+      searchData = searchResults.videos[0];
+      videoUrl = searchData.url;
+    }
+
+    // Prepare the Velyn API URL
+    const apiUrl = `https://velyn.vercel.app/api/downloader/ytmp3?url=${encodeURIComponent(videoUrl)}`;
+
+    // Call the Velyn API using GET
+    const response = await axios.get(apiUrl);
+
+    // Check if the API response is valid
+    if (!response.data || !response.data.status || !response.data.output) {
+      return reply('❌ Unable to fetch the song. Please try again later.');
+    }
+
+    // Extract the download link
+    const downloadUrl = response.data.output;
+
+    // Prepare the song details
+    const songDetails = searchData ? {
+      title: searchData.title,
+      artist: searchData.author.name,
+      duration: searchData.timestamp,
+      views: searchData.views
+    } : {
+      title: "Unknown",
+      artist: "Unknown",
+      duration: "Unknown",
+      views: "Unknown"
+    };
+
+    // Inform the user that the song is being downloaded
+    await reply(`🎵 *Subzero Downloading ${songDetails.title}...*`);
+
+    // Download the song
+    const songResponse = await axios.get(downloadUrl, { responseType: 'arraybuffer' });
+    if (!songResponse.data) {
+      return reply('❌ Failed to download the song. Please try again later.');
+    }
+
+    // Save the downloaded file temporarily
+    const tempFilePath = path.join(__dirname, `${songDetails.title}.mp3`);
+    fs.writeFileSync(tempFilePath, songResponse.data);
+
+    // Compress the audio using ffmpeg
+    const compressedFilePath = path.join(__dirname, `${songDetails.title}_compressed.mp3`);
+    await new Promise((resolve, reject) => {
+      ffmpeg(tempFilePath)
+        .audioBitrate(128) // Set audio bitrate to 128kbps
+        .output(compressedFilePath)
+        .on('end', resolve)
+        .on('error', reject)
+        .run();
+    });
+
+    // Read the compressed file
+    const compressedBuffer = fs.readFileSync(compressedFilePath);
+
+    // Send the compressed song as a document
+    await conn.sendMessage(from, {
+      document: compressedBuffer,
+      mimetype: 'audio/mpeg',
+      fileName: `${songDetails.title}.mp3`,
+      caption: `> © Gᴇɴᴇʀᴀᴛᴇᴅ ʙʏ Sᴜʙᴢᴇʀᴏ`,
+      contextInfo: {
+        mentionedJid: [m.sender],
+        forwardingScore: 999,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: '120363304325601080@newsletter',
+          newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+          serverMessageId: 143
+        }
+      }
+    }, { quoted: mek });
+
+    // Delete temporary files
+    fs.unlinkSync(tempFilePath);
+    fs.unlinkSync(compressedFilePath);
+
+    // Add a reaction to indicate success
+    await conn.sendMessage(from, { react: { text: '✅', key: m.key } });
+  } catch (error) {
+    console.error('Error downloading song:', error);
+    reply('❌ Unable to download the song. Please try again later.');
+
+    // Add a reaction to indicate failure
+    await conn.sendMessage(from, { react: { text: '❌', key: m.key } });
+  }
 });
-
-// Handler to update bot's bio
-let handler = m => m;
-
-handler.all = async function (m) {
-    try {
-        // Get the autoBio setting from MongoDB
-        const autoBio = await getAutoBio(this.user.jid);
-
-        if (autoBio) {
-            let _muptime;
-
-            // Calculate uptime
-            if (process.send) {
-                process.send('uptime');
-                _muptime = await new Promise(resolve => {
-                    process.once('message', resolve);
-                    setTimeout(resolve, 1000);
-                }) * 1000;
-            }
-
-            // Log the uptime for debugging
-            console.log('Uptime calculated:', _muptime);
-
-            // Format the uptime
-            let muptime = clockString(_muptime);
-
-            // Log the formatted uptime for debugging
-            console.log('Formatted uptime:', muptime);
-
-            // Set the bot's bio
-            let bio = `\n⌚ Time Active: ${muptime}\n\n ┃ 🛡️ᑭᖇIᑎᑕᕮ ᗷOT ᗰᗪ🛡️`;
-            await this.updateProfileStatus(bio)
-                .then(() => console.log('Bio updated successfully!'))
-                .catch(err => console.error('Error updating bio:', err));
-        }
-    } catch (error) {
-        console.error('Error in bio updater:', error);
-    }
-};
-
-module.exports = handler;
-
-// Function to format uptime
-function clockString(ms) {
-    let d = isNaN(ms) ? '--' : Math.floor(ms / 86400000); // Days
-    let h = isNaN(ms) ? '--' : Math.floor(ms / 3600000) % 24; // Hours
-    let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60; // Minutes
-    let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60; // Seconds
-
-    return [d, ' Day(s) ️', h, ' Hour(s) ', m, ' Minute(s)']
-        .map(v => v.toString().padStart(2, 0))
-        .join('');
-}
-*/
