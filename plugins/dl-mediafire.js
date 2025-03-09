@@ -1,49 +1,120 @@
-const axios = require('axios');
-const { cmd } = require('../command');
+const axios = require("axios");
+const { cmd } = require("../command");
 
 cmd({
-  pattern: 'mediafire',
-  alias: ['mfire', 'mfdl'],
+  pattern: "mediafire",
+  alias: ["mfire", "mfdownload"],
   react: '📥',
-  desc: 'Download files from MediaFire links.',
-  category: 'tools',
-  use: '.mediafire <MediaFire URL>',
+  desc: "Download files from MediaFire.",
+  category: "download",
+  use: ".mediafire <MediaFire URL>",
   filename: __filename
-}, async (conn, mek, msg, { from, reply, args }) => {
+}, async (conn, mek, m, { from, reply, args }) => {
   try {
     // Check if the user provided a MediaFire URL
-    if (!args.length) {
-      return reply('❌ Please provide a MediaFire URL!\nExample: `.mediafire https://www.mediafire.com/file/xyz/file.zip`');
+    const mediafireUrl = args[0];
+    if (!mediafireUrl || !mediafireUrl.includes("mediafire.com")) {
+      return reply('Please provide a valid MediaFire URL. Example: `.mediafire https://mediafire.com/...`');
     }
 
-    const url = args[0];
-    await reply('📥 Fetching file details from MediaFire...');
+    // Add a reaction to indicate processing
+    await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-    // Fetch file details using the API
-    const apiUrl = `https://api.nexoracle.com/downloader/media-fire?apikey=e276311658d835109c&url=${encodeURIComponent(url)}`;
-    const { data } = await axios.get(apiUrl);
+    // Prepare the Velyn API URL
+    const apiUrl = `https://velyn.vercel.app/api/downloader/mediafire?url=${encodeURIComponent(mediafireUrl)}`;
 
-    // Check if the API returned valid data
-    if (!data.result || data.status !== 200) {
-      return reply('❌ Failed to fetch file details. Please check the URL and try again.');
+    // Call the Velyn API using GET
+    const response = await axios.get(apiUrl);
+
+    // Check if the API response is valid
+    if (!response.data || !response.data.status || !response.data.data) {
+      return reply('❌ Unable to fetch the file. Please check the URL and try again.');
     }
 
-    const { name, size, date, mime, link } = data.result;
+    // Extract the file details
+    const { filename, size, mimetype, link } = response.data.data;
 
-    // Prepare the response message
-    const caption = `📂 *File Details*\n\n` +
-                    `*📛 Name:* ${name}\n` +
-                    `*📦 Size:* ${size}\n` +
-                    `*📅 Date:* ${date}\n` +
-                    `*📄 MIME Type:* ${mime}\n\n` +
-                    `🔗 *Download Link:*\n${link}\n\n` +
-                    `> © Powered by Subzero`;
+    // Inform the user that the file is being downloaded
+    await reply(`📥 *Downloading ${filename} (${size})... Please wait.*`);
 
-    // Send the file details and download link
-    await reply(caption);
+    // Download the file
+    const fileResponse = await axios.get(link, { responseType: 'arraybuffer' });
+    if (!fileResponse.data) {
+      return reply('❌ Failed to download the file. Please try again later.');
+    }
 
+    // Prepare the file buffer
+    const fileBuffer = Buffer.from(fileResponse.data, 'binary');
+
+    // Send the file based on its MIME type
+    if (mimetype.startsWith('image')) {
+      // Send as image
+      await conn.sendMessage(from, {
+        image: fileBuffer,
+        caption: `📥 *File Details*\n\n` +
+          `🔖 *Name*: ${filename}\n` +
+          `📏 *Size*: ${size}\n\n` +
+          `> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`,
+        contextInfo: {
+          mentionedJid: [m.sender],
+          forwardingScore: 999,
+          isForwarded: true,
+          forwardedNewsletterMessageInfo: {
+            newsletterJid: '120363304325601080@newsletter',
+            newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+            serverMessageId: 143
+          }
+        }
+      }, { quoted: mek });
+    } else if (mimetype.startsWith('video')) {
+      // Send as video
+      await conn.sendMessage(from, {
+        video: fileBuffer,
+        caption: `📥 *File Details*\n\n` +
+          `🔖 *Name*: ${filename}\n` +
+          `📏 *Size*: ${size}\n\n` +
+          `> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`,
+        contextInfo: {
+          mentionedJid: [m.sender],
+          forwardingScore: 999,
+          isForwarded: true,
+          forwardedNewsletterMessageInfo: {
+            newsletterJid: '120363304325601080@newsletter',
+            newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+            serverMessageId: 143
+          }
+        }
+      }, { quoted: mek });
+    } else {
+      // Send as document
+      await conn.sendMessage(from, {
+        document: fileBuffer,
+        mimetype: mimetype,
+        fileName: filename,
+        caption: `📥 *File Details*\n\n` +
+          `🔖 *Name*: ${filename}\n` +
+          `📏 *Size*: ${size}\n\n` +
+          `> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ`,
+        contextInfo: {
+          mentionedJid: [m.sender],
+          forwardingScore: 999,
+          isForwarded: true,
+          forwardedNewsletterMessageInfo: {
+            newsletterJid: '120363304325601080@newsletter',
+            newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+            serverMessageId: 143
+          }
+        }
+      }, { quoted: mek });
+    }
+
+    // Add a reaction to indicate success
+    await conn.sendMessage(from, { react: { text: '✅', key: m.key } });
   } catch (error) {
-    console.error('MediaFire Error:', error);
-    reply('❌ An error occurred while fetching the file details. Please try again later.');
+    console.error('Error downloading file:', error);
+    reply('❌ Unable to download the file. Please try again later.');
+
+    // Add a reaction to indicate failure
+    await conn.sendMessage(from, { react: { text: '❌', key: m.key } });
   }
 });
