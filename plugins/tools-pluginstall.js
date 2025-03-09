@@ -1,4 +1,4 @@
-const { cmd } = require('../command');
+/*const { cmd } = require('../command');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
@@ -53,4 +53,4 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
         console.error(error);
         reply(`Error: ${error.message}`);
     }
-});
+});*/
