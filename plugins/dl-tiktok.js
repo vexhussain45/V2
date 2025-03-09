@@ -1,331 +1,81 @@
-/*
-
-$$$$$$\            $$\                                               
-$$  __$$\           $$ |                                              
-$$ /  \__|$$\   $$\ $$$$$$$\  $$$$$$$$\  $$$$$$\   $$$$$$\   $$$$$$\  
-\$$$$$$\  $$ |  $$ |$$  __$$\ \____$$  |$$  __$$\ $$  __$$\ $$  __$$\ 
- \____$$\ $$ |  $$ |$$ |  $$ |  $$$$ _/ $$$$$$$$ |$$ |  \__|$$ /  $$ |
-$$\   $$ |$$ |  $$ |$$ |  $$ | $$  _/   $$   ____|$$ |      $$ |  $$ |
-\$$$$$$  |\$$$$$$  |$$$$$$$  |$$$$$$$$\ \$$$$$$$\ $$ |      \$$$$$$  |
- \______/  \______/ \_______/ \________| \_______|\__|       \______/
-
-Project Name : SubZero MD
-Creator      : Darrell Mucheri ( Mr Frank OFC )
-Repo         : https//github.com/mrfrank-ofc/SUBZERO-MD
-Support      : wa.me/18062212660
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const config = require('../config');
-const { cmd, commands } = require('../command');
 const axios = require("axios");
+const { cmd } = require("../command");
 
 cmd({
-  pattern: "tiktokstalk",
-  alias: ["ttstalk", "tiktokuser"],
-  desc: "Get information about a TikTok user, including their profile picture, bio, and stats.",
-  category: "utility",
-  use: ".tiktokstalk <username>",
-  filename: __filename,
-}, async (conn, mek, msg, { from, args, reply }) => {
+  pattern: "tiktok",
+  alias: ["ttdl", "tiktokdl","tt"],
+  react: '📥',
+  desc: "Download TikTok videos.",
+  category: "download",
+  use: ".tiktok <TikTok video URL>",
+  filename: __filename
+}, async (conn, mek, m, { from, reply, args }) => {
   try {
-    const username = args.join(" ");
-    if (!username) {
-      return reply("❌ Please provide a TikTok username. Example: `.tiktokstalk mrbeast`");
+    // Check if the user provided a TikTok video URL
+    const tiktokUrl = args[0];
+    if (!tiktokUrl || !tiktokUrl.includes("tiktok.com")) {
+      return reply('Please provide a valid TikTok video URL. Example: `.tiktok https://tiktok.com/...`');
     }
 
-    // Fetch TikTok user information from the API
-    const response = await axios.get(`https://api.siputzx.my.id/api/stalk/tiktok?username=${encodeURIComponent(username)}`);
-    const { status, data } = response.data;
+    // Add a reaction to indicate processing
+    await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-    if (!status || !data) {
-      return reply("❌ No information found for the specified TikTok user. Please try again.");
+    // Prepare the API URL
+    const apiUrl = `https://api.nexoracle.com/downloader/tiktok-nowm?apikey=free_key@maher_apis&url=${encodeURIComponent(tiktokUrl)}`;
+
+    // Call the API using GET
+    const response = await axios.get(apiUrl);
+
+    // Check if the API response is valid
+    if (!response.data || response.data.status !== 200 || !response.data.result) {
+      return reply('❌ Unable to fetch the video. Please check the URL and try again.');
     }
 
-    const {
-      user: {
-        uniqueId,
-        nickname,
-        avatarLarger,
-        signature,
-        verified,
-        bioLink,
-        region,
-        language,
-        createTime,
-      },
-      stats: {
-        followerCount,
-        followingCount,
-        heartCount,
-        videoCount,
-        diggCount,
-      },
-    } = data;
+    // Extract the video details
+    const { title, thumbnail, author, metrics, url } = response.data.result;
 
-    // Format the TikTok user information message
-    const tiktokMessage = `
-👤 *TikTok Username*: @${uniqueId}
-📛 *Nickname*: ${nickname}
-📝 *Bio*: ${signature || "N/A"}
-✅ *Verified*: ${verified ? "Yes" : "No"}
-🌐 *Region*: ${region || "N/A"}
-🗣️ *Language*: ${language || "N/A"}
-🔗 *Bio Link*: ${bioLink?.link || "N/A"}
-📅 *Account Created*: ${new Date(createTime * 1000).toLocaleString()}
+    // Inform the user that the video is being downloaded
+    await reply(`📥 *Downloading TikTok video by @${author.username}... Please wait.*`);
 
-📊 *Stats*:
-👥 *Followers*: ${followerCount.toLocaleString()}
-👣 *Following*: ${followingCount.toLocaleString()}
-❤️ *Total Likes*: ${heartCount.toLocaleString()}
-🎥 *Total Videos*: ${videoCount.toLocaleString()}
-👍 *Total Diggs*: ${diggCount.toLocaleString()}
-    `;
+    // Download the video
+    const videoResponse = await axios.get(url, { responseType: 'arraybuffer' });
+    if (!videoResponse.data) {
+      return reply('❌ Failed to download the video. Please try again later.');
+    }
 
-    // Send the TikTok user information message with the profile picture as an image attachment
+    // Prepare the video buffer
+    const videoBuffer = Buffer.from(videoResponse.data, 'binary');
+
+    // Send the video with details
     await conn.sendMessage(from, {
-      image: { url: avatarLarger }, // Attach the profile picture
-      caption: tiktokMessage, // Add the formatted message as caption
-    });
+      video: videoBuffer,
+      caption: `📥 *TikTok Video*\n\n` +
+        `🔖 *Title*: ${title || "No title"}\n` +
+        `👤 *Author*: @${author.username} (${author.nickname})\n` +
+        `❤️ *Likes*: ${metrics.digg_count}\n` +
+        `💬 *Comments*: ${metrics.comment_count}\n` +
+        `🔁 *Shares*: ${metrics.share_count}\n` +
+        `📥 *Downloads*: ${metrics.download_count}\n\n` +
+        `> © Powered by Mr Frank`,
+      contextInfo: {
+        mentionedJid: [m.sender],
+        forwardingScore: 999,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: '120363304325601080@newsletter',
+          newsletterName: '『 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃 』',
+          serverMessageId: 143
+        }
+      }
+    }, { quoted: mek });
+
+    // Add a reaction to indicate success
+    await conn.sendMessage(from, { react: { text: '✅', key: m.key } });
   } catch (error) {
-    console.error("Error fetching TikTok user information:", error);
-    reply("❌ Unable to fetch TikTok user information. Please try again later.");
-  }
-});
+    console.error('Error downloading TikTok video:', error);
+    reply('❌ Unable to download the video. Please try again later.');
 
-   //&&&&&&&&;
-
-
-cmd({
-  pattern: "tiktokdl",
-  alias: ["ttdl", "tiktokdownload"],
-  desc: "Download a TikTok video by providing the video URL.",
-  category: "utility",
-  use: ".tiktokdl <tiktok_url>",
-  filename: __filename,
-}, async (conn, mek, msg, { from, args, reply }) => {
-  try {
-    const tiktokUrl = args.join(" ");
-    if (!tiktokUrl) {
-      return reply("❌ Please provide a TikTok video URL. Example: `.tiktokdl https://vt.tiktok.com/ZSjXNEnbC`");
-    }
-
-    // Fetch TikTok video download links from the API
-    const response = await axios.get(`https://api.siputzx.my.id/api/tiktok?url=${encodeURIComponent(tiktokUrl)}`);
-    const { status, data } = response.data;
-
-    if (!status || !data || !data.urls || data.urls.length === 0) {
-      return reply("❌ Unable to fetch the TikTok video. Please check the URL and try again.");
-    }
-
-    // Get the first video URL (usually the highest quality)
-    const videoUrl = data.urls[0];
-
-    // Send the TikTok video as an attachment
-    await conn.sendMessage(from, {
-      video: { url: videoUrl }, // Attach the video
-      caption: "🎥 *TikTok Video Downloader*\n🔗 *Original URL*: " + tiktokUrl,
-    });
-  } catch (error) {
-    console.error("Error downloading TikTok video:", error);
-    reply("❌ Unable to download the TikTok video. Please try again later.");
+    // Add a reaction to indicate failure
+    await conn.sendMessage(from, { react: { text: '❌', key: m.key } });
   }
 });
