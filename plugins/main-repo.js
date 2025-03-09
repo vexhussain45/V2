@@ -319,7 +319,7 @@ ${readMore}
 
         // Send an image with the formatted info as a caption and context info
         await conn.sendMessage(from, {
-            image: { url: `https://i.ibb.co/jrhPy01/mrfrankofc.jpg` },
+            image: { url: `https://i.postimg.cc/MpLk9Xmm/IMG-20250305-WA0010.jpg` },
             caption: formattedInfo,
             contextInfo: { 
                 mentionedJid: [m.sender],
