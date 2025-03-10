@@ -6,7 +6,7 @@ const path = require("path");
 const { cmd } = require("../command");
 
 cmd({
-  pattern: "tourl2",
+  pattern: "tourl",
   alias: ["imgtourl", "imgurl", "url"],
   react: '🖇',
   desc: "Convert an image to a URL.",
@@ -37,8 +37,7 @@ cmd({
         reqtype: 'fileupload' // Required parameter for Catbox.moe
       },
       headers: {
-        ...formData.getHeaders(), // Include FormData headers
-        'Content-Length': formData.getLengthSync() // Explicitly set content length
+        ...formData.getHeaders() // Let axios handle Content-Length automatically
       }
     });
 
