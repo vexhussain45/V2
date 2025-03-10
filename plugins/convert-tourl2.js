@@ -6,7 +6,7 @@ const path = require("path");
 const { cmd } = require("../command");
 
 cmd({
-  pattern: "tourl4",
+  pattern: "tourl2",
   alias: ["imgtourl", "imgurl", "url"],
   react: '🖇',
   desc: "Convert an image to a URL.",
@@ -25,19 +25,20 @@ cmd({
 
     // Download the media file
     const mediaBuffer = await quotedMessage.download();
-    const tempFilePath = path.join(os.tmpdir(), "subzero_bot.jpg"); // Temporary file path
+    const tempFilePath = path.join(os.tmpdir(), "temp_image"); // No file extension
     fs.writeFileSync(tempFilePath, mediaBuffer);
 
     // Upload the media to Catbox.moe
     const formData = new FormData();
-    formData.append('fileToUpload', fs.createReadStream(tempFilePath));
+    formData.append('fileToUpload', fs.createReadStream(tempFilePath)); // No custom filename
 
     const uploadResponse = await axios.post('https://catbox.moe/user/api.php', formData, {
       params: {
         reqtype: 'fileupload' // Required parameter for Catbox.moe
       },
       headers: {
-        ...formData.getHeaders()
+        ...formData.getHeaders(), // Include FormData headers
+        'Content-Length': formData.getLengthSync() // Explicitly set content length
       }
     });
 
