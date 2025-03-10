@@ -1,65 +1,60 @@
 const axios = require("axios");
-const FormData = require("form-data");
-const fs = require("fs");
-const os = require("os");
+const FormData = require('form-data');
+const fs = require('fs');
+const os = require('os');
 const path = require("path");
 const { cmd } = require("../command");
 
 cmd({
   pattern: "tourl2",
-  alias: ["imgtourl2", "img2url2", "url2"],
-  react: "🖇",
-  desc: "Convert an image to a URL using ImgBB.",
+  alias: ["imgtourl2", "imgurl2", "url2"],
+  react: '🖇',
+  desc: "Convert an image to a URL.",
   category: "utility",
-  use: ".tourl (Reply to an image)",
+  use: ".tourl (reply to an image)",
   filename: __filename
-}, async (conn, m, store, { from, quoted, reply, sender }) => {
+}, async (conn, mek, m, { reply }) => {
   try {
-    const targetMsg = quoted ? quoted : m;
-    const mimeType = (targetMsg.msg || targetMsg).mimetype || "";
+    // Check if the message is a quoted message or contains media
+    const quotedMessage = m.quoted ? m.quoted : m;
+    const mimeType = (quotedMessage.msg || quotedMessage).mimetype || '';
 
-    if (!mimeType || !mimeType.startsWith("image")) {
-      return reply("❌ Please reply to an image.");
+    if (!mimeType || !mimeType.startsWith('image')) {
+      return reply("🌻 Please reply to an image.");
     }
 
-    reply("🔄 Uploading image...");
+    // Download the media file
+    const mediaBuffer = await quotedMessage.download();
+    const tempFilePath = path.join(os.tmpdir(), "subzero_bot.jpg"); // Temporary file path
+    fs.writeFileSync(tempFilePath, mediaBuffer);
 
-    const imageBuffer = await targetMsg.download();
-    const tempFilePath = path.join(os.tmpdir(), "mrfrank.jpg");
-    fs.writeFileSync(tempFilePath, imageBuffer);
-
+    // Upload the media to FreeImage.Host
     const formData = new FormData();
-    formData.append("image", fs.createReadStream(tempFilePath));
+    formData.append('source', fs.createReadStream(tempFilePath));
 
-    const { data } = await axios.post("https://api.imgbb.com/1/upload?key=e909ac2cc8d50250c08f176afef0e333", formData, {
-      headers: formData.getHeaders(),
+    const uploadResponse = await axios.post('https://freeimage.host/api/1/upload', formData, {
+      params: {
+        key: 'free' // No API key required
+      },
+      headers: {
+        ...formData.getHeaders()
+      }
     });
 
-    fs.unlinkSync(tempFilePath); // Delete temp file
-
-    if (!data || !data.data || !data.data.url) {
-      throw "❌ Failed to upload the image.";
+    if (!uploadResponse.data || !uploadResponse.data.image || !uploadResponse.data.image.url) {
+      throw "❌ Error uploading the image.";
     }
 
-    const imageUrl = data.data.url;
-    const msgContext = {
-      mentionedJid: [sender],
-      forwardingScore: 999,
-      isForwarded: true,
-      forwardedNewsletterMessageInfo: {
-        newsletterJid: "120363354023106228@newsletter",
-        newsletterName: "𝐒𝐔𝐁𝐙𝐄𝐑𝐎 𝐌𝐃",
-        serverMessageId: 143
-      }
-    };
+    const imageUrl = uploadResponse.data.image.url;
 
-    await conn.sendMessage(from, {
-      text: `✅ *Image Uploaded Successfully 📸*\n📏 *Size:* ${imageBuffer.length} Bytes\n🔗 *URL:* ${imageUrl}\n\n> © 𝐔𝐏𝐋𝐎𝐀𝐃 𝐁𝐘 𝐒𝐔𝐁𝐙𝐄𝐑𝐎 *`,
-      contextInfo: msgContext
-    });
+    // Delete the temporary file
+    fs.unlinkSync(tempFilePath);
+
+    // Send the URL to the user
+    await reply(`\`IMAGE UPLOADED SUCCESSFULLY!\`\n\n──────────────────────\n📂 *File Size:* ${mediaBuffer.length} bytes\n🔗 *URL:* ${imageUrl}\n\n──────────────────────\n> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ғʀᴀɴᴋ `);
 
   } catch (error) {
-    reply("❌ Error: " + error.message);
-    console.error("Upload Error:", error);
+    console.error("Error in tourl command:", error);
+    reply(`❌ Error: ${error.message || error}`);
   }
 });
