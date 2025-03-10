@@ -6,8 +6,8 @@ const path = require("path");
 const { cmd } = require("../command");
 
 cmd({
-  pattern: "tourl2",
-  alias: ["imgtourl2", "imgurl2", "url2"],
+  pattern: "tourl4",
+  alias: ["imgtourl", "imgurl", "url"],
   react: '🖇',
   desc: "Convert an image to a URL.",
   category: "utility",
@@ -28,24 +28,24 @@ cmd({
     const tempFilePath = path.join(os.tmpdir(), "subzero_bot.jpg"); // Temporary file path
     fs.writeFileSync(tempFilePath, mediaBuffer);
 
-    // Upload the media to FreeImage.Host
+    // Upload the media to Catbox.moe
     const formData = new FormData();
-    formData.append('source', fs.createReadStream(tempFilePath));
+    formData.append('fileToUpload', fs.createReadStream(tempFilePath));
 
-    const uploadResponse = await axios.post('https://freeimage.host/api/1/upload', formData, {
+    const uploadResponse = await axios.post('https://catbox.moe/user/api.php', formData, {
       params: {
-        key: 'free' // No API key required
+        reqtype: 'fileupload' // Required parameter for Catbox.moe
       },
       headers: {
         ...formData.getHeaders()
       }
     });
 
-    if (!uploadResponse.data || !uploadResponse.data.image || !uploadResponse.data.image.url) {
+    if (!uploadResponse.data || !uploadResponse.data.includes('http')) {
       throw "❌ Error uploading the image.";
     }
 
-    const imageUrl = uploadResponse.data.image.url;
+    const imageUrl = uploadResponse.data;
 
     // Delete the temporary file
     fs.unlinkSync(tempFilePath);
