@@ -1,14 +1,14 @@
 {
-  "name": "SUBZERO-MD",
-  "description": "Whiskey Sockets Baileys Whatsapp bot By Mr Frank",
-  "logo": "https://i.postimg.cc/zv76KffW/IMG-20250115-WA0020.jpg",
-  "keywords": ["SUBZERO-MD"],
+  "name": "🦋𝗜𝗧𝗔𝗖𝗛𝗜 ✞︎ 𝗨𝗖𝗛𝗜𝗛𝗔 ♂️",
+  "description": "Whiskey Sockets Baileys Whatsapp bot By Mr Hussain",
+  "logo": "https://i.imgur.com/30pE7Mu.jpeg",
+  "keywords": ["HUSSAIN-XMD"],
   "success_url": "/",
 
     "stack": "container",
   "env": {
     "SESSION_ID": {
-      "description": "Put your Subzero session-id here.",
+      "description": "",
       "required": true,
       "value": ""
     },  
