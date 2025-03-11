@@ -3,7 +3,7 @@ const { cmd } = require("../command");
 const moment = require("moment-timezone");
 let botStartTime = Date.now();
 
-const ALIVE_IMG = "https://i.postimg.cc/3RgPr15t/IMG-20250305-WA0008.jpg";
+const ALIVE_IMG = "https://i.imgur.com/30pE7Mu.jpeg";
 
 cmd({
   pattern: "alive",
@@ -21,7 +21,7 @@ cmd({
     const runtimeMinutes = Math.floor((runtimeMilliseconds / (1000 * 60)) % 60);
     const runtimeHours = Math.floor(runtimeMilliseconds / (1000 * 60 * 60));
     const formattedInfo = `
- 🏮 *SUBZERO MD STATUS* 🏮 
+ 🏮 *ITACHI UCHIHA STATUS* 🏮 
 
   *Hi👋😄 ${pushname}*
 
@@ -29,9 +29,9 @@ cmd({
  *📆 Date: ${harareDate}*
  *🔋 Uptime: ${runtimeHours} hours, ${runtimeMinutes} minutes, ${runtimeSeconds} seconds*
 
- \`Status\`: *Subzero is online! 🤗🚀*
+ \`Status\`: *Itachi is online! 🤗🚀*
 
-> 𝐏𝐎𝐖𝐄𝐑𝐄𝐃 𝐁𝐘 𝐌𝐑 𝐅𝐑𝐀𝐍𝐊. 🔗
+> 𝐏𝐎𝐖𝐄𝐑𝐄𝐃 𝐁𝐘 𝐌𝐑 𝗛𝗨𝗦𝗦𝗔𝗜𝗡. 🔗
 `.trim();
 
     if (!ALIVE_IMG || !ALIVE_IMG.startsWith("http")) {
