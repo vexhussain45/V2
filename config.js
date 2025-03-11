@@ -7,7 +7,7 @@ function convertToBool(text, fault = 'true') {
 module.exports = {
 SESSION_ID: process.env.SESSION_ID || "SUBZERO-MD~ucZVXKIZ#xre0N0f4ePBtJ5ygaasfKMgqsXAgfFT753bH7qYeoiI",
 // add your Session Id 
-AUTO_STATUS_REACT: process.env.AUTO_STATUS_REACT || "true",
+AUTO_STATUS_REACT: process.env.AUTO_STATUS_REACT || "false",
 // make true or false status auto seen
 AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY || "false",
 // make true if you want auto reply on status 
@@ -31,7 +31,7 @@ OWNER_NAME: process.env.OWNER_NAME || "𝗠𝗥_𝗛𝗨𝗦𝗦𝗔𝗜𝗡",
 // add bot owner name
 DESCRIPTION: process.env.DESCRIPTION || "*© ᴘᴏᴡᴇʀᴇᴅ ʙʏ Hᴜssᴀɪɴ*",
 // add bot owner name    
-ALIVE_IMG: process.env.ALIVE_IMG || "https://i.postimg.cc/zv76KffW/IMG-20250115-WA0020.jpg",
+ALIVE_IMG: process.env.ALIVE_IMG || "https://i.imgur.com/30pE7Mu.jpeg",
 // add img for alive msg
 READ_MESSAGE: process.env.READ_MESSAGE || "false",
 // Turn true or false for automatic read msgs
